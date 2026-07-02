@@ -207,6 +207,116 @@ h1 {
 }
 #btn-restart:hover { border-color: var(--ink2); color: var(--ink); }
 
+/* ── Modus-Navigation ── */
+.mode-nav { display: flex; gap: 20px; margin-bottom: 26px; }
+.mode-nav a {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  letter-spacing: .12em; text-transform: uppercase; text-decoration: none;
+  color: var(--ink3); padding-bottom: 4px; border-bottom: 2px solid transparent;
+  transition: color .15s;
+}
+.mode-nav a:hover { color: var(--ink); }
+.mode-nav a.active { color: var(--clay); border-bottom-color: var(--clay); }
+.mode-nav a:focus-visible { outline: 2px solid var(--clay); outline-offset: 3px; }
+
+/* ── Ergebnis speichern ── */
+.save-box {
+  margin-top: 36px; padding: 22px;
+  border: 1px solid var(--line2); border-radius: 14px;
+}
+.save-box h3 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 19px; margin-bottom: 6px; }
+.save-box .save-sub { font-size: 13.5px; color: var(--ink2); }
+.save-box .save-sub a { color: var(--indigo); }
+.save-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+#save-name {
+  flex: 1; min-width: 150px;
+  font-family: 'Source Sans 3', sans-serif; font-size: 14.5px; color: var(--ink);
+  padding: 11px 14px; border: 1px solid var(--line2); border-radius: 10px;
+  background: transparent;
+}
+#save-name:focus-visible { outline: 2px solid var(--indigo); outline-offset: 1px; }
+#btn-save {
+  font-family: 'Source Sans 3', sans-serif; font-size: 14px; font-weight: 600;
+  background: var(--indigo); color: #fff; border: none; border-radius: 10px;
+  padding: 11px 20px; cursor: pointer; transition: opacity .15s;
+}
+#btn-save:hover { opacity: .9; }
+.save-hint { margin-top: 10px; font-size: 12.5px; color: var(--ink2); min-height: 1em; }
+
+/* ── Paar-Vergleich ── */
+#view-compare { display: none; padding: 48px 0 20px; }
+#view-compare.show { display: block; }
+#view-compare h2 {
+  font-family: 'Fraunces', serif; font-weight: 500; font-size: 30px;
+  margin-bottom: 10px;
+}
+.cmp-loaders { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 28px; }
+@media (max-width: 540px) { .cmp-loaders { grid-template-columns: 1fr; } }
+.loader {
+  display: block; text-align: center; cursor: pointer;
+  border: 1.5px dashed var(--line2); border-radius: 14px; padding: 22px 16px;
+  transition: border-color .15s;
+}
+.loader:hover { border-color: var(--indigo); }
+.loader input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.loader input:focus-visible + .who { outline: 2px solid var(--clay); outline-offset: 3px; }
+.loader .who {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10.5px;
+  letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px;
+}
+.loader.a .who { color: var(--indigo); }
+.loader.b .who { color: var(--clay); }
+.loader .state { font-size: 13.5px; color: var(--ink2); line-height: 1.5; }
+.loader .loaded-name { font-family: 'Fraunces', serif; font-size: 20px; color: var(--ink); }
+.loader.loaded { border-style: solid; }
+.loader.a.loaded { border-color: var(--indigo); }
+.loader.b.loaded { border-color: var(--clay); }
+.loader .err { color: var(--clay); font-weight: 600; }
+
+.cmp-legend { display: flex; gap: 22px; margin: 34px 0 6px; font-size: 13.5px; font-weight: 600; }
+.cmp-legend .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 7px; }
+.cmp-legend .dot.a { background: var(--indigo); }
+.cmp-legend .dot.b { background: var(--clay); }
+
+.cmp-row { padding: 13px 0; border-top: 1px solid var(--line); }
+#cmp-chart .cmp-row:first-child { border-top: none; }
+.cmp-names { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 7px; }
+.cmp-style { font-size: 14px; font-weight: 600; text-align: center; flex: 1; }
+.cmp-score { font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: var(--ink2); }
+.cmp-score.lead { font-weight: 700; }
+.cmp-score.a.lead { color: var(--indigo); }
+.cmp-score.b.lead { color: var(--clay); }
+.cmp-track { display: flex; align-items: stretch; height: 9px; }
+.cmp-half { flex: 1; background: var(--paper2); overflow: hidden; display: flex; }
+.cmp-half.left { border-radius: 5px 0 0 5px; justify-content: flex-end; }
+.cmp-half.right { border-radius: 0 5px 5px 0; }
+.cmp-divider { width: 2px; background: var(--line2); flex-shrink: 0; }
+.cmp-fill { height: 100%; }
+.cmp-fill.a { background: var(--indigo); }
+.cmp-fill.b { background: var(--clay); }
+
+.dyn-card {
+  margin-top: 34px; padding: 22px;
+  background: var(--paper2); border-radius: 14px;
+  font-size: 14.5px; line-height: 1.65;
+}
+.dyn-card h3 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 20px; margin-bottom: 10px; }
+.dyn-card p + p { margin-top: 10px; }
+
+.tip-card { margin-top: 18px; padding: 22px; border: 1px solid var(--line2); border-radius: 14px; }
+.tip-card .kicker {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10.5px;
+  letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px;
+}
+.tip-card.a .kicker { color: var(--indigo); }
+.tip-card.b .kicker { color: var(--clay); }
+.tip-card h3 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 21px; margin-bottom: 8px; }
+.tip-card .tip-meta { font-size: 13.5px; color: var(--ink2); line-height: 1.55; margin-bottom: 14px; }
+.tip-card .tip-meta strong { color: var(--ink); }
+.tip-card ul { list-style: none; display: grid; gap: 9px; }
+.tip-card li { font-size: 14px; line-height: 1.55; padding-left: 18px; position: relative; }
+.tip-card li::before { content: '→'; position: absolute; left: 0; color: var(--ink3); }
+
 footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(--ink3); }
 
 @media (prefers-reduced-motion: reduce) {
@@ -218,6 +328,10 @@ footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(-
 
 <div class="wrap">
   <header>
+    <nav class="mode-nav" aria-label="Bereich wählen">
+      <a href="#" id="nav-test" class="active">Selbsttest</a>
+      <a href="#" id="nav-compare">Paar-Vergleich</a>
+    </nav>
     <div class="eyebrow">Selbsttest · 9 Abschnitte · 72 Fragen</div>
     <h1>Wie tickst du?</h1>
     <p class="sub">Dieser Selbsttest orientiert sich am Modell der Persönlichkeitsstile von Rainer Sachse aus „Wie man sich selbst und anderen auf die Schliche kommt".</p>
@@ -230,6 +344,8 @@ footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(-
     <p class="header-cta">Los geht's!</p>
     <p class="header-note">Es gibt kein richtig oder falsch.</p>
   </header>
+
+  <div id="view-test">
 
   <div id="progress-bar">
     <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
@@ -248,10 +364,40 @@ footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(-
     <h2 id="res-headline">Dein Profil</h2>
     <p class="res-intro" id="res-lead-text"></p>
     <div id="res-list"></div>
+    <div class="save-box">
+      <h3>Ergebnis als Datei speichern</h3>
+      <p class="save-sub">Zum Aufbewahren — und für den <a href="#" class="goto-compare">Paar-Vergleich</a>: Speichert ihr beide euer Ergebnis, könnt ihr die zwei Dateien dort gegenüberstellen.</p>
+      <div class="save-row">
+        <input id="save-name" type="text" placeholder="Dein Vorname" maxlength="40" autocomplete="off">
+        <button id="btn-save">Ergebnis speichern</button>
+      </div>
+      <p class="save-hint" id="save-hint"></p>
+    </div>
     <div class="disclaimer">
       <strong>Wichtig:</strong> Egal, welcher Stil bei dir überwiegt — es handelt sich um Tendenzen, nicht um eine Diagnose oder ein Störungsbild. Dieser Test bietet nur eine erste Orientierung und ersetzt keine fachliche Abklärung.
     </div>
     <button id="btn-restart">Test neu starten</button>
+  </div>
+
+  </div><!-- /view-test -->
+
+  <div id="view-compare">
+    <div class="res-eyebrow">Paar-Vergleich</div>
+    <h2>Einander besser verstehen</h2>
+    <p class="res-intro">Ladet hier zwei gespeicherte Ergebnis-Dateien — deine und die deines Partners, deiner Partnerin oder einer anderen Person. Ihr seht beide Profile im direkten Vergleich und bekommt Hinweise, wie ihr die Muster des anderen besser einordnen könnt. Die Dateien entstehen im Selbsttest über „Ergebnis speichern".</p>
+    <div class="cmp-loaders">
+      <label class="loader a">
+        <input type="file" id="file-a" accept=".json,application/json">
+        <div class="who">Person A</div>
+        <div class="state" id="state-a">Datei auswählen …</div>
+      </label>
+      <label class="loader b">
+        <input type="file" id="file-b" accept=".json,application/json">
+        <div class="who">Person B</div>
+        <div class="state" id="state-b">Datei auswählen …</div>
+      </label>
+    </div>
+    <div id="cmp-output"></div>
   </div>
 
   <footer>Basiert auf: Rainer Sachse, „Persönlichkeitsstile" (Junfermann, 2019) — private Arbeitsversion, nicht zur Weitergabe.</footer>
@@ -423,12 +569,16 @@ function fmtScore(n) {
   return n.toFixed(2).replace(/\.?0+$/, '').replace('.', ',') || '0';
 }
 
-document.getElementById('btn-eval').addEventListener('click', () => {
-  const scores = blocks.map((block, bi) => {
+function computeScores() {
+  return blocks.map((block, bi) => {
     let sum = 0;
     for (let qi = 0; qi < block.questions.length; qi++) sum += (answers[bi+'-'+qi] || 0);
     return { style: block.style, score: Math.round(sum * 100) / 100, max: block.questions.length };
   });
+}
+
+document.getElementById('btn-eval').addEventListener('click', () => {
+  const scores = computeScores();
   scores.sort((a,b) => b.score - a.score);
   const topScore = scores[0].score;
   const leaders = scores.filter(s => s.score === topScore);
@@ -463,9 +613,274 @@ document.getElementById('btn-restart').addEventListener('click', () => {
   Object.keys(answers).forEach(k => delete answers[k]);
   document.querySelectorAll('.q-btn').forEach(b => b.classList.remove('selected'));
   document.getElementById('results').classList.remove('show');
+  document.getElementById('save-name').value = '';
+  document.getElementById('save-hint').textContent = '';
   updateProgress();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
+
+/* ── Ansichten: Selbsttest / Paar-Vergleich ── */
+function showView(which) {
+  const compare = which === 'compare';
+  document.getElementById('view-test').style.display = compare ? 'none' : 'block';
+  document.getElementById('view-compare').classList.toggle('show', compare);
+  document.getElementById('nav-test').classList.toggle('active', !compare);
+  document.getElementById('nav-compare').classList.toggle('active', compare);
+  window.scrollTo(0, 0);
+}
+document.getElementById('nav-test').addEventListener('click', e => { e.preventDefault(); showView('test'); });
+document.getElementById('nav-compare').addEventListener('click', e => { e.preventDefault(); showView('compare'); });
+document.querySelectorAll('.goto-compare').forEach(a => a.addEventListener('click', e => { e.preventDefault(); showView('compare'); }));
+
+/* ── Ergebnis als Datei speichern ── */
+document.getElementById('btn-save').addEventListener('click', () => {
+  const nameEl = document.getElementById('save-name');
+  const hint = document.getElementById('save-hint');
+  const name = nameEl.value.trim();
+  if (!name) {
+    hint.textContent = 'Bitte gib zuerst einen Namen ein — er erscheint später im Vergleich.';
+    nameEl.focus();
+    return;
+  }
+  const datum = new Date().toISOString().slice(0, 10);
+  const data = {
+    typ: 'persoenlichkeitsstile-selbsttest', version: 1,
+    name, datum,
+    scores: computeScores(),
+    antworten: Object.assign({}, answers)
+  };
+  const slug = name.toLowerCase()
+    .replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss')
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'') || 'ergebnis';
+  const dateiname = 'stilprofil-' + slug + '-' + datum + '.json';
+  const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
+  const a = document.createElement('a');
+  a.href = url; a.download = dateiname;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+  hint.textContent = 'Gespeichert als „' + dateiname + '" — auf dem Handy findest du die Datei unter Downloads.';
+});
+
+/* ── Stil-Wissen für den Paar-Vergleich (nach Sachse) ── */
+const STIL_INFO = {
+  'Narzisstischer Stil': { kurz: 'Narzisstisch', gruppe: 'naehe', motiv: 'Anerkennung',
+    antrieb: 'Leistung und Erfolg sind zentral — dahinter steht oft ein leiser Zweifel, gut genug zu sein.',
+    wund: 'Kritik (auch berechtigte) und das Gefühl, nicht respektiert zu werden.',
+    tipps: [
+      'Sprich Anerkennung konkret und ehrlich aus — für etwas Bestimmtes, nicht pauschal.',
+      'Übe Kritik sachlich, unter vier Augen, und beginne mit dem, was gut war.',
+      'Vermeide Vergleiche mit anderen — sie treffen tiefer, als du denkst.',
+      'Nimm Erfolge ernst, statt sie kleinzureden — sie sind auch Beziehungsangebote.'
+    ]},
+  'Histrionischer Stil': { kurz: 'Histrionisch', gruppe: 'naehe', motiv: 'Wichtigkeit',
+    antrieb: 'Im Leben anderer eine Rolle zu spielen ist das Kernbedürfnis — Aufmerksamkeit ist die Währung dafür.',
+    wund: 'Ignoriert werden, halbherziges Zuhören, das Gefühl, keine Rolle zu spielen.',
+    tipps: [
+      'Höre wirklich zu — Blickkontakt, Handy weg. Halbes Zuhören verletzt hier mehr als ein Nein.',
+      'Gib Aufmerksamkeit freiwillig, bevor sie eingefordert werden muss.',
+      'Nimm starke Gefühle ernst, statt sie als Übertreibung abzutun — die Intensität ist echt.',
+      'Zeige konkret, welche Rolle diese Person in deinem Leben spielt.'
+    ]},
+  'Dependenter Stil': { kurz: 'Dependent', gruppe: 'naehe', motiv: 'Verlässlichkeit',
+    antrieb: 'Eine stabile Bindung ist das höchste Gut — dafür wird viel gegeben und oft auf Eigenes verzichtet.',
+    wund: 'Zeichen von Distanz: offener Streit, Unklarheit, oder wenn jemand lange „böse" bleibt.',
+    tipps: [
+      'Sichere Verlässlichkeit ausdrücklich zu — gerade im Streit („Wir streiten, aber ich bleibe.").',
+      'Frage aktiv nach eigenen Wünschen — sie werden selten von selbst geäußert.',
+      'Lass Konflikte nicht tagelang offen stehen — Unklarheit belastet mehr als Klartext.',
+      'Ermutige eigene Entscheidungen, statt sie abzunehmen.'
+    ]},
+  'Selbstunsicherer Stil': { kurz: 'Selbstunsicher', gruppe: 'naehe', motiv: 'Anerkennung als Person',
+    antrieb: 'Der Wunsch nach Kontakt ist da — aber die Angst vor Ablehnung ist oft größer.',
+    wund: 'Bloßgestellt werden, Ablehnung, das Gefühl, anderen zu wenig zu bieten.',
+    tipps: [
+      'Mache Zuneigung und Interesse ausdrücklich — verlasse dich nicht darauf, dass „man das doch merkt".',
+      'Stelle diese Person nie vor anderen bloß, auch nicht im Scherz.',
+      'Sende deutliche Signale, bevor du etwas erwartest — Unsicherheit braucht Einladung.',
+      'Unterstütze kleine soziale Schritte, ohne zu drängen.'
+    ]},
+  'Passiv-aggressiver Stil': { kurz: 'Passiv-aggressiv', gruppe: 'distanz', motiv: 'Autonomie und Grenzen',
+    antrieb: 'Eigene Bereiche und Selbstbestimmung sind heilig — Widerstand zeigt sich eher still als offen.',
+    wund: 'Bevormundung, Kontrolle, ungefragtes Eindringen in den eigenen Bereich.',
+    tipps: [
+      'Biete Optionen an, statt Anweisungen zu geben — Druck erzeugt stillen Gegendruck.',
+      'Respektiere eigene Bereiche (Zeit, Raum, Entscheidungen) ohne Rechtfertigungspflicht.',
+      'Deute stilles Verweigern nicht als Faulheit — es heißt meist: „Ich fühle mich bevormundet." Sprich das direkt an.',
+      'Verhandle auf Augenhöhe — Machtkämpfe verlieren hier am Ende beide.'
+    ]},
+  'Schizoider Stil': { kurz: 'Schizoid', gruppe: 'distanz', motiv: 'Distanz und Eigenständigkeit',
+    antrieb: 'Beziehungen kosten Energie — Alleinsein ist keine Notlösung, sondern Erholung.',
+    wund: 'Vereinnahmung, erzwungene Geselligkeit, Druck, Gefühle zeigen zu müssen.',
+    tipps: [
+      'Nimm Rückzug nicht persönlich — er ist Erholung, kein Liebesentzug.',
+      'Plane Alleinzeit fest ein und respektiere sie ohne Nachfragen.',
+      'Fordere Gefühlsäußerungen nicht ein — gemeinsames Tun verbindet oft mehr als Reden.',
+      'Wenige, ruhige gemeinsame Momente zählen mehr als viele laute.'
+    ]},
+  'Zwanghafter Stil': { kurz: 'Zwanghaft', gruppe: 'distanz', motiv: 'Kontrolle und Sicherheit',
+    antrieb: 'Alles richtig machen, Fehler vermeiden — Regeln geben Halt.',
+    wund: 'Chaos, Regelbrüche, spontane Planänderungen, Kontrollverlust.',
+    tipps: [
+      'Kündige Änderungen früh an, statt zu überraschen.',
+      'Mach dich über das Ordnungsbedürfnis nicht lustig — dahinter steht Angst vor Fehlern, nicht Pedanterie.',
+      'Erkenne an, wie viel Verlässlichkeit dieser Stil in euren Alltag bringt.',
+      'Vereinbart gemeinsam Bereiche, in denen Spontaneität ausdrücklich erlaubt ist.'
+    ]},
+  'Paranoider Stil': { kurz: 'Paranoid', gruppe: 'distanz', motiv: 'Wachsamkeit und Verlässlichkeit',
+    antrieb: 'Vorsicht schützt — wer zu schnell vertraut, kann verletzt werden.',
+    wund: 'Heimlichkeiten, Andeutungen, das Gefühl, hintergangen oder abgewertet zu werden.',
+    tipps: [
+      'Sei maximal transparent — offen gelegte Pläne und Absichten nehmen dem Misstrauen die Nahrung.',
+      'Vermeide Ironie und Andeutungen — sie werden schnell gegen dich ausgelegt.',
+      'Weise Vorwürfe nicht empört zurück — bleib ruhig und biete überprüfbare Fakten an.',
+      'Vertrauen wächst hier über lange Verlässlichkeit, nicht über Beteuerungen.'
+    ]},
+  'Borderline-Stil': { kurz: 'Borderline', gruppe: 'wechsel', motiv: 'Nähe und Distanz im Wechsel',
+    antrieb: 'Starke Bedürfnisse nach Nähe und nach Distanz wechseln sich ab — beides ist echt.',
+    wund: 'Das Gefühl, sich nicht sicher sein zu können — beim anderen und bei sich selbst.',
+    tipps: [
+      'Halte den Wechsel zwischen Nähe- und Distanzwunsch aus, ohne ihn als Widerspruch vorzuhalten.',
+      'Besprecht in ruhigen Momenten, welche Signale „Ich brauche gerade Abstand" bedeuten.',
+      'Erkenne „Tests" („Steht er/sie noch zu mir?") als Bindungsfrage — beantworte die Frage, nicht die Provokation.',
+      'Bei heftigen Reaktionen: erst beruhigen, später klären. Beständigkeit wirkt stärker als Argumente.'
+    ]}
+};
+
+/* Bekannte Paar-Konstellationen (Komorbiditäts-Kapitel bei Sachse) */
+const SPEZIAL_PAARE = {
+  'Histrionisch + Narzisstisch': 'Diese Kombination gilt als gut verträglich: Beide leben von Aufmerksamkeit und Bestätigung — und verstehen dieses Bedürfnis beim anderen daher intuitiv. Die typische Falle ist Konkurrenz um die Bühne: Wer glänzt, wer hört zu? Hilfreich: bewusst abwechseln und die Erfolge des anderen mitfeiern, statt sie zu überbieten.',
+  'Narzisstisch + Zwanghaft': 'In dieser Kombination ist Reibung eingebaut: Die eine Seite nimmt sich gern Sonderrechte heraus, die andere pocht auf Regeln, die für alle gelten. Hilfreich: klären, welche Regeln wirklich beiden wichtig sind — und wo Ausnahmen niemandem schaden.',
+  'Dependent + Histrionisch': 'Hier fordert eine Seite Aufmerksamkeit hörbar ein, die andere gibt still und stellt sich zurück. Das kann lange gut gehen, kippt aber leicht in Einseitigkeit. Hilfreich: regelmäßig aktiv fragen, was der stillere Teil braucht — bevor Erschöpfung oder Groll entsteht.'
+};
+
+/* ── Dateien laden ── */
+const geladen = { a: null, b: null };
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function fmtDatum(iso) {
+  const t = String(iso).split('-');
+  return t.length === 3 ? t[2] + '.' + t[1] + '.' + t[0] : esc(iso);
+}
+
+function ladeDatei(input, slot) {
+  const file = input.files && input.files[0];
+  if (!file) return;
+  const stateEl = document.getElementById('state-' + slot);
+  const label = input.closest('.loader');
+  const reader = new FileReader();
+  reader.onload = () => {
+    let data = null;
+    try { data = JSON.parse(reader.result); } catch (e) {}
+    const gueltig = data && data.typ === 'persoenlichkeitsstile-selbsttest' && Array.isArray(data.scores)
+      && blocks.every(b => data.scores.some(s => s.style === b.style && typeof s.score === 'number'));
+    if (!gueltig) {
+      geladen[slot] = null;
+      label.classList.remove('loaded');
+      stateEl.innerHTML = '<span class="err">Keine gültige Ergebnis-Datei.</span><br>Bitte eine Datei wählen, die im Selbsttest über „Ergebnis speichern" erzeugt wurde.';
+    } else {
+      geladen[slot] = data;
+      label.classList.add('loaded');
+      stateEl.innerHTML = '<div class="loaded-name">' + esc(data.name || 'Ohne Namen') + '</div>Test vom ' + fmtDatum(data.datum || '');
+    }
+    renderVergleich();
+  };
+  reader.readAsText(file);
+}
+document.getElementById('file-a').addEventListener('change', e => ladeDatei(e.target, 'a'));
+document.getElementById('file-b').addEventListener('change', e => ladeDatei(e.target, 'b'));
+
+/* ── Vergleich rendern ── */
+function leitstile(data) {
+  const max = Math.max.apply(null, data.scores.map(s => s.score));
+  return data.scores.filter(s => s.score === max).map(s => s.style);
+}
+
+function dynamikHTML(nameA, nameB, leadA, leadB) {
+  const ia = STIL_INFO[leadA[0]], ib = STIL_INFO[leadB[0]];
+  const paras = [];
+  if (leadA[0] === leadB[0]) {
+    paras.push('Ihr habt denselben Leitstil (' + ia.kurz.toLowerCase() + '). Ihr versteht die Beweggründe des anderen vermutlich intuitiv — teilt aber auch dieselben wunden Punkte. Was dich selbst trifft, trifft sehr wahrscheinlich auch den anderen: Seid genau an diesen Stellen besonders behutsam miteinander.');
+  } else {
+    const key = [ia.kurz, ib.kurz].sort().join(' + ');
+    if (SPEZIAL_PAARE[key]) {
+      paras.push(SPEZIAL_PAARE[key]);
+    } else if (ia.gruppe === 'wechsel' || ib.gruppe === 'wechsel') {
+      const w = ia.gruppe === 'wechsel' ? nameA : nameB;
+      const o = ia.gruppe === 'wechsel' ? nameB : nameA;
+      paras.push(w + ' kennt starke Nähe- und starke Distanzbedürfnisse — oft im Wechsel, und beides ist echt. Für ' + o + ' heißt das: Der Wechsel ist kein Widerspruch und kein Signal gegen die Beziehung. Hilfreich sind Beständigkeit, Abstand aushalten — und Nähe annehmen, wenn sie da ist.');
+    } else if (ia.gruppe === ib.gruppe) {
+      paras.push(ia.gruppe === 'naehe'
+        ? 'Ihr seid beide „Nähe-Stile": Beziehung ist für euch zentral, ihr geht aktiv auf Menschen zu — und seid entsprechend verletzlich, wenn Bestätigung ausbleibt. Typische Falle: Beide warten darauf, dass der andere Aufmerksamkeit gibt, und fühlen sich zu kurz gekommen. Hilfreich: bewusst abwechseln, wer „Bühne" bekommt — und Anerkennung aussprechen, bevor sie eingefordert wird.'
+        : 'Ihr seid beide „Distanz-Stile": Freiraum, Vorsicht und Kontrolle sind euch wichtiger als ständige Nähe. Das entspannt — keiner engt den anderen ein. Typische Falle: Wünsche und Konflikte werden nie ausgesprochen, die Beziehung wird still. Hilfreich: feste, kleine Gesprächsanlässe, in denen jeder sagt, was er braucht — bevor sich etwas aufstaut.');
+    } else {
+      const n = ia.gruppe === 'naehe' ? nameA : nameB;
+      const d = ia.gruppe === 'naehe' ? nameB : nameA;
+      paras.push('Klassische Nähe-Distanz-Konstellation: ' + n + ' sucht Verbindung und Reaktion, ' + d + ' braucht Freiraum und Zeit für sich. Typische Falle: Je mehr die eine Seite auf die andere zugeht, desto mehr weicht diese zurück — ein Kreislauf, in dem sich beide unverstanden fühlen. Hilfreich: Nähe planbar machen (feste gemeinsame Zeit) und Rückzug ankündigen statt einfach zu verschwinden — dann ist er kein Liebesentzug.');
+    }
+  }
+  if (leadA.length > 1 || leadB.length > 1) {
+    const wer = [leadA.length > 1 ? nameA : null, leadB.length > 1 ? nameB : null].filter(Boolean).join(' und ');
+    paras.push('Hinweis: Bei ' + wer + ' sind mehrere Stile gleich stark ausgeprägt — unten findet ihr deshalb Hinweise zu jedem dieser Stile.');
+  }
+  return '<div class="dyn-card"><h3>Eure Konstellation</h3>' + paras.map(p => '<p>' + p + '</p>').join('') + '</div>';
+}
+
+function tippsHTML(side, name, other, leads) {
+  return leads.map(style => {
+    const i = STIL_INFO[style];
+    return '<div class="tip-card ' + side + '">'
+      + '<div class="kicker">Für ' + other + '</div>'
+      + '<h3>' + name + ' besser verstehen</h3>'
+      + '<div class="tip-meta"><strong>Leitstil:</strong> ' + i.kurz + ' · <strong>Kernmotiv:</strong> ' + i.motiv + '<br>'
+      + i.antrieb + '<br><strong>Wunder Punkt:</strong> ' + i.wund + '</div>'
+      + '<ul>' + i.tipps.map(t => '<li>' + t + '</li>').join('') + '</ul>'
+      + '</div>';
+  }).join('');
+}
+
+function renderVergleich() {
+  const out = document.getElementById('cmp-output');
+  if (!geladen.a || !geladen.b) { out.innerHTML = ''; return; }
+  const A = geladen.a, B = geladen.b;
+  const nameA = esc(A.name || 'Person A'), nameB = esc(B.name || 'Person B');
+  const leadA = leitstile(A), leadB = leitstile(B);
+
+  let html = '<div class="cmp-legend"><span><span class="dot a"></span>' + nameA + '</span><span><span class="dot b"></span>' + nameB + '</span></div>';
+
+  const reihen = blocks.map(b => {
+    const sa = A.scores.find(s => s.style === b.style);
+    const sb = B.scores.find(s => s.style === b.style);
+    return { style: b.style, a: sa.score, b: sb.score, max: sa.max || 8 };
+  }).sort((x, y) => Math.max(y.a, y.b) - Math.max(x.a, x.b) || (y.a + y.b) - (x.a + x.b));
+
+  html += '<div id="cmp-chart">';
+  reihen.forEach(r => {
+    const info = STIL_INFO[r.style];
+    const pa = Math.round(r.a / r.max * 100), pb = Math.round(r.b / r.max * 100);
+    const la = leadA.indexOf(r.style) !== -1, lb = leadB.indexOf(r.style) !== -1;
+    html += '<div class="cmp-row">'
+      + '<div class="cmp-names">'
+      + '<span class="cmp-score a' + (la ? ' lead' : '') + '">' + fmtScore(r.a) + '</span>'
+      + '<span class="cmp-style">' + info.kurz + '</span>'
+      + '<span class="cmp-score b' + (lb ? ' lead' : '') + '">' + fmtScore(r.b) + '</span>'
+      + '</div>'
+      + '<div class="cmp-track">'
+      + '<div class="cmp-half left"><div class="cmp-fill a" style="width:' + pa + '%"></div></div>'
+      + '<div class="cmp-divider"></div>'
+      + '<div class="cmp-half right"><div class="cmp-fill b" style="width:' + pb + '%"></div></div>'
+      + '</div></div>';
+  });
+  html += '</div>';
+
+  html += dynamikHTML(nameA, nameB, leadA, leadB);
+  html += tippsHTML('a', nameA, nameB, leadA);
+  html += tippsHTML('b', nameB, nameA, leadB);
+  html += '<div class="disclaimer" style="margin-top:26px"><strong>Wichtig:</strong> Beide Profile zeigen Tendenzen, keine Diagnosen. Die Hinweise sind Gesprächsanregungen für euch — kein Ersatz für eine Paar- oder Fachberatung.</div>';
+
+  out.innerHTML = html;
+}
 
 updateProgress();
 </script>
