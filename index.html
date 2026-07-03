@@ -222,6 +222,34 @@ h1 {
 }
 .cta-compare { display: none; margin-top: 30px; text-align: center; }
 .cta-compare.show { display: block; }
+.cta-compare-row {
+  display: flex; gap: 10px; justify-content: center; align-items: stretch; flex-wrap: wrap;
+}
+#cta-name {
+  width: 170px;
+  font-family: 'Source Sans 3', sans-serif; font-size: 14.5px; color: var(--ink);
+  padding: 11px 14px; border: 1px solid var(--line2); border-radius: 10px;
+  background: transparent; text-align: center;
+}
+#cta-name:focus-visible { outline: 2px solid var(--clay); outline-offset: 1px; }
+
+.backshare {
+  margin-top: 26px; padding: 22px;
+  border: 1px solid var(--line2); border-radius: 14px; text-align: center;
+}
+.backshare h3 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 20px; margin-bottom: 6px; }
+.backshare p { font-size: 13.5px; color: var(--ink2); line-height: 1.55; margin-bottom: 14px; }
+#btn-backshare {
+  font-family: 'Source Sans 3', sans-serif; font-size: 14.5px; font-weight: 600;
+  background: var(--clay); color: #fff; border: none;
+  border-radius: 10px; padding: 12px 22px; cursor: pointer;
+  box-shadow: 0 6px 18px rgba(168,90,58,.25);
+  transition: transform .12s, box-shadow .2s;
+}
+#btn-backshare:hover { box-shadow: 0 8px 22px rgba(168,90,58,.33); }
+#btn-backshare:active { transform: scale(.98); }
+#backshare-panel { display: none; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
+#backshare-panel.show { display: block; }
 #btn-goto-compare {
   font-family: 'Source Sans 3', sans-serif; font-size: 15px; font-weight: 600;
   background: var(--clay); color: #fff; border: none;
@@ -271,39 +299,34 @@ h1 {
   background: transparent;
 }
 #save-name:focus-visible { outline: 2px solid var(--indigo); outline-offset: 1px; }
-#btn-save {
-  font-family: 'Source Sans 3', sans-serif; font-size: 14px; font-weight: 600;
-  background: var(--indigo); color: #fff; border: none; border-radius: 10px;
-  padding: 11px 20px; cursor: pointer; transition: opacity .15s;
-}
-#btn-save:hover { opacity: .9; }
 .save-hint { margin-top: 10px; font-size: 12.5px; color: var(--ink2); min-height: 1em; }
 #btn-share {
-  font-family: 'Source Sans 3', sans-serif; font-size: 14px; font-weight: 600;
-  background: transparent; color: var(--indigo); border: 1px solid var(--indigo);
-  border-radius: 10px; padding: 11px 20px; cursor: pointer; transition: all .15s;
+  font-family: 'Source Sans 3', sans-serif; font-size: 15px; font-weight: 600;
+  background: var(--clay); color: #fff; border: none;
+  border-radius: 10px; padding: 12px 22px; cursor: pointer;
+  box-shadow: 0 6px 18px rgba(168,90,58,.25);
+  transition: transform .12s, box-shadow .2s;
 }
-#btn-share:hover { background: var(--indigo); color: #fff; }
+#btn-share:hover { box-shadow: 0 8px 22px rgba(168,90,58,.33); }
+#btn-share:active { transform: scale(.98); }
+.file-line { margin-top: 18px; font-size: 12.5px; color: var(--ink3); }
+.file-line a { color: var(--ink2); }
+.file-line a:hover { color: var(--ink); }
 .share-panel { display: none; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
 .share-panel.show { display: block; }
-#qr-box {
+#qr-box, #backshare-qr {
   width: 212px; padding: 12px; background: #fff; border-radius: 10px;
   margin: 0 auto 14px; border: 1px solid var(--line);
 }
-#qr-box img, #qr-box canvas, #qr-box table { display: block; margin: 0 auto; }
-.link-row { display: flex; gap: 8px; flex-wrap: wrap; }
-#share-link {
-  flex: 1; min-width: 170px;
-  font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: var(--ink2);
-  padding: 10px 12px; border: 1px solid var(--line2); border-radius: 10px;
-  background: transparent;
-}
-#btn-copy {
+#qr-box img, #qr-box canvas, #qr-box table,
+#backshare-qr img, #backshare-qr canvas, #backshare-qr table { display: block; margin: 0 auto; }
+.link-row { text-align: center; }
+#btn-copy, #btn-backcopy {
   font-family: 'Source Sans 3', sans-serif; font-size: 13px; font-weight: 600;
   background: transparent; border: 1px solid var(--line2); color: var(--ink2);
   border-radius: 10px; padding: 10px 16px; cursor: pointer; transition: all .15s;
 }
-#btn-copy:hover { border-color: var(--ink2); color: var(--ink); }
+#btn-copy:hover, #btn-backcopy:hover { border-color: var(--ink2); color: var(--ink); }
 .share-note { margin-top: 10px; font-size: 12.5px; color: var(--ink3); line-height: 1.5; }
 .own-btn {
   display: none; width: 100%; margin-top: 8px;
@@ -438,17 +461,18 @@ footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(-
     <p class="res-intro" id="res-lead-text"></p>
     <div id="res-list"></div>
     <div class="cta-compare" id="cta-compare">
-      <button id="btn-goto-compare"></button>
+      <div class="cta-compare-row">
+        <input id="cta-name" type="text" placeholder="Dein Vorname" maxlength="40" autocomplete="off">
+        <button id="btn-goto-compare"></button>
+      </div>
       <p class="cta-note" id="cta-compare-note"></p>
     </div>
     <div class="save-box">
-      <h3>Ergebnis sichern &amp; teilen</h3>
-      <p class="save-sub"><strong>Als Datei speichern:</strong> So hebst du dein Ergebnis für später auf — es wird als kleine Datei auf dein Gerät geladen.</p>
-      <p class="save-sub"><strong>QR-Code &amp; Link zeigen:</strong> Du willst dein Ergebnis mit einer anderen Person vergleichen? Dann bekommst du hier einen QR-Code. Die andere Person scannt ihn mit ihrer Handy-Kamera — und kann sofort mit dem Test loslegen. Den <a href="#" class="goto-compare">Profil-Vergleich</a> zeigt euch die Seite danach automatisch. Den Link kannst du auch schicken, zum Beispiel per WhatsApp.</p>
+      <h3>Vergleiche dein Ergebnis</h3>
+      <p class="save-sub">Mit deinem Partner, einer Freundin, einem Kollegen: Die andere Person macht den Test auch — und ihr seht euer Ergebnis nebeneinander, mit Tipps für euch beide.</p>
       <div class="save-row">
         <input id="save-name" type="text" placeholder="Dein Vorname" maxlength="40" autocomplete="off">
-        <button id="btn-save">Als Datei speichern</button>
-        <button id="btn-share">QR-Code &amp; Link zeigen</button>
+        <button id="btn-share">Mit jemandem vergleichen</button>
       </div>
       <p class="save-hint" id="save-hint"></p>
       <div class="share-panel" id="share-panel">
@@ -459,14 +483,12 @@ footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(-
           <li>Auf ihrem Bildschirm erscheint ein Link — sie tippt darauf.</li>
         </ol>
         <div id="qr-box"></div>
-        <p class="share-steps-title">Oder ohne QR-Code:</p>
-        <p class="save-sub">Kopiere den Link und schicke ihn der Person, zum Beispiel per WhatsApp oder E-Mail.</p>
         <div class="link-row">
-          <input id="share-link" readonly>
-          <button id="btn-copy">Link kopieren</button>
+          <button id="btn-copy">Oder: Link kopieren und schicken (z. B. WhatsApp)</button>
         </div>
         <p class="share-note">Dein Ergebnis steckt komplett im Link selbst. Es wird nichts ins Internet hochgeladen. Nur wer den Link bekommt, kann dein Ergebnis sehen.</p>
       </div>
+      <p class="file-line"><a href="#" id="btn-save">Ergebnis als Datei speichern</a> — falls du es lieber als Datei auf diesem Gerät aufheben willst.</p>
     </div>
     <div class="disclaimer">
       <strong>Wichtig:</strong> Egal, welcher Stil bei dir überwiegt — es handelt sich um Tendenzen, nicht um eine Diagnose oder ein Störungsbild. Dieser Test bietet nur eine erste Orientierung und ersetzt keine fachliche Abklärung.
@@ -712,7 +734,11 @@ document.getElementById('btn-eval').addEventListener('click', () => {
   const cta = document.getElementById('cta-compare');
   if (empfangenesErgebnis) {
     document.getElementById('btn-goto-compare').textContent = 'Zum Profil-Vergleich mit ' + (empfangenesErgebnis.name || 'Person A');
-    document.getElementById('cta-compare-note').textContent = 'Euer Vergleich ist bereit — ein Klick genügt.';
+    document.getElementById('cta-compare-note').textContent = 'Euer Vergleich ist bereit.';
+    const ctaName = document.getElementById('cta-name');
+    if (!ctaName.value.trim()) {
+      ctaName.value = document.getElementById('save-name').value.trim() || (eigenesErgebnis() || {}).name || '';
+    }
     cta.classList.add('show');
   } else {
     cta.classList.remove('show');
@@ -750,7 +776,8 @@ document.getElementById('nav-compare').addEventListener('click', e => { e.preven
 document.querySelectorAll('.goto-compare').forEach(a => a.addEventListener('click', e => { e.preventDefault(); showView('compare'); }));
 
 /* ── Ergebnis als Datei speichern ── */
-document.getElementById('btn-save').addEventListener('click', () => {
+document.getElementById('btn-save').addEventListener('click', (e) => {
+  e.preventDefault();
   const nameEl = document.getElementById('save-name');
   const hint = document.getElementById('save-hint');
   const name = nameEl.value.trim();
@@ -994,7 +1021,32 @@ function renderVergleich() {
   html += tippsHTML('b', nameB, nameA, leadB);
   html += '<div class="disclaimer" style="margin-top:26px"><strong>Wichtig:</strong> Beide Profile zeigen Tendenzen, keine Diagnosen. Die Hinweise sind Gesprächsanregungen für euch — kein Ersatz für eine fachliche Beratung.</div>';
 
+  /* Rückweg: eigenes Ergebnis an die Person zurückschicken, die eingeladen hat */
+  const rueckweg = empfangenesErgebnis && geladen.a === empfangenesErgebnis && geladen.b;
+  if (rueckweg) {
+    html += '<div class="backshare">'
+      + '<h3>Und ' + nameA + '?</h3>'
+      + '<p>' + nameA + ' sieht diesen Vergleich noch nicht. Schick dein Ergebnis zurück — dann seht ihr ihn beide.</p>'
+      + '<button id="btn-backshare">Schick ' + nameA + ' dein Ergebnis</button>'
+      + '<div id="backshare-panel">'
+      + '<div id="backshare-qr"></div>'
+      + '<div class="link-row"><button id="btn-backcopy">Oder: Link kopieren und schicken (z. B. WhatsApp)</button></div>'
+      + '<p class="share-note">' + nameA + ' scannt den Code oder öffnet den Link — und sieht sofort euren Vergleich.</p>'
+      + '</div></div>';
+  }
+
   out.innerHTML = html;
+
+  if (rueckweg) {
+    document.getElementById('btn-backshare').addEventListener('click', () => {
+      const eigene = geladen.b;
+      const url = linkBasis() + '#p=' + encodeErgebnis(eigene.name || 'Ich', eigene.datum || new Date().toISOString().slice(0, 10), eigene.scores);
+      zeigeQR(document.getElementById('backshare-qr'), url);
+      document.getElementById('backshare-panel').classList.add('show');
+      const backcopy = document.getElementById('btn-backcopy');
+      backcopy.onclick = () => kopiereLink(url, backcopy);
+    });
+  }
 }
 
 /* ── Teilen per QR-Code / Link (Ergebnis steckt im Link, kein Upload) ── */
@@ -1008,8 +1060,8 @@ function setLoaderLoaded(slot, data, quelle) {
     '<div class="loaded-name">' + esc(data.name || 'Ohne Namen') + '</div>' + quelle;
 }
 
-function encodeErgebnis(name, datum) {
-  const s = computeScores().map(x => Math.round(x.score * 4));
+function encodeErgebnis(name, datum, scoresArr) {
+  const s = (scoresArr || computeScores()).map(x => Math.round(x.score * 4));
   const json = JSON.stringify({ n: name, d: datum, s: s });
   const bytes = new TextEncoder().encode(json);
   let bin = '';
@@ -1042,32 +1094,50 @@ document.getElementById('btn-share').addEventListener('click', () => {
   hint.textContent = '';
   const datum = new Date().toISOString().slice(0, 10);
   merkeEigenesErgebnis(name, datum);
-  const basis = location.protocol === 'file:' ? ONLINE_URL : location.origin + location.pathname;
-  const url = basis + '#p=' + encodeErgebnis(name, datum);
-  document.getElementById('share-link').value = url;
-  const qrBox = document.getElementById('qr-box');
-  qrBox.innerHTML = '';
-  if (typeof QRCode !== 'undefined') {
-    new QRCode(qrBox, { text: url, width: 188, height: 188, colorDark: '#2B2A28', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
-  } else {
-    qrBox.innerHTML = '<p style="font-size:12.5px;color:#5F5E5A;text-align:center;padding:8px">QR-Code konnte nicht erzeugt werden (keine Internetverbindung?) — nutze den Link unten.</p>';
-  }
+  shareUrl = linkBasis() + '#p=' + encodeErgebnis(name, datum);
+  zeigeQR(document.getElementById('qr-box'), shareUrl);
   document.getElementById('share-panel').classList.add('show');
 });
 
-document.getElementById('btn-copy').addEventListener('click', () => {
-  const inp = document.getElementById('share-link');
-  const btn = document.getElementById('btn-copy');
-  inp.select(); inp.setSelectionRange(0, 99999);
+let shareUrl = '';
+
+function linkBasis() {
+  return location.protocol === 'file:' ? ONLINE_URL : location.origin + location.pathname;
+}
+
+function zeigeQR(box, url) {
+  box.innerHTML = '';
+  if (typeof QRCode !== 'undefined') {
+    new QRCode(box, { text: url, width: 188, height: 188, colorDark: '#2B2A28', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+  } else {
+    box.innerHTML = '<p style="font-size:12.5px;color:#5F5E5A;text-align:center;padding:8px">QR-Code konnte nicht erzeugt werden (keine Internetverbindung?) — nutze den Kopier-Knopf unten.</p>';
+  }
+}
+
+function kopiereLink(url, btn) {
+  const alt = btn.textContent;
   const fertig = () => {
-    btn.textContent = 'Kopiert ✓';
-    setTimeout(() => { btn.textContent = 'Link kopieren'; }, 2000);
+    btn.textContent = 'Link kopiert ✓ — jetzt einfügen und abschicken';
+    setTimeout(() => { btn.textContent = alt; }, 2500);
+  };
+  const notloesung = () => {
+    const ta = document.createElement('textarea');
+    ta.value = url;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    ta.remove();
+    fertig();
   };
   if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(inp.value).then(fertig, () => { document.execCommand('copy'); fertig(); });
+    navigator.clipboard.writeText(url).then(fertig, notloesung);
   } else {
-    document.execCommand('copy'); fertig();
+    notloesung();
   }
+}
+
+document.getElementById('btn-copy').addEventListener('click', () => {
+  kopiereLink(shareUrl, document.getElementById('btn-copy'));
 });
 
 /* ── Eigenes letztes Ergebnis (nur lokal in diesem Browser) ── */
@@ -1138,14 +1208,14 @@ function importAusLink() {
 }
 
 document.getElementById('btn-goto-compare').addEventListener('click', () => {
-  const nameEl = document.getElementById('save-name');
-  const name = nameEl.value.trim();
+  const nameEl = document.getElementById('cta-name');
+  const name = nameEl.value.trim() || document.getElementById('save-name').value.trim();
   if (!name) {
-    document.getElementById('save-hint').textContent = 'Bitte gib hier noch deinen Vornamen ein — er erscheint im Vergleich.';
-    nameEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    document.getElementById('cta-compare-note').textContent = 'Trag noch deinen Vornamen ein — er erscheint im Vergleich.';
     nameEl.focus();
     return;
   }
+  document.getElementById('save-name').value = name;
   merkeEigenesErgebnis(name);
   const eigen = eigenesErgebnis();
   setLoaderLoaded('b', eigen, 'Dein Ergebnis von gerade eben');
