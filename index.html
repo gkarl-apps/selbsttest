@@ -243,7 +243,7 @@ h1 {
 #btn-save:hover { opacity: .9; }
 .save-hint { margin-top: 10px; font-size: 12.5px; color: var(--ink2); min-height: 1em; }
 
-/* ── Paar-Vergleich ── */
+/* ── Profil-Vergleich ── */
 #view-compare { display: none; padding: 48px 0 20px; }
 #view-compare.show { display: block; }
 #view-compare h2 {
@@ -330,7 +330,7 @@ footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(-
   <header>
     <nav class="mode-nav" aria-label="Bereich wählen">
       <a href="#" id="nav-test" class="active">Selbsttest</a>
-      <a href="#" id="nav-compare">Paar-Vergleich</a>
+      <a href="#" id="nav-compare">Profil-Vergleich</a>
     </nav>
     <div class="eyebrow">Selbsttest · 9 Abschnitte · 72 Fragen</div>
     <h1>Wie tickst du?</h1>
@@ -366,7 +366,7 @@ footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(-
     <div id="res-list"></div>
     <div class="save-box">
       <h3>Ergebnis als Datei speichern</h3>
-      <p class="save-sub">Zum Aufbewahren — und für den <a href="#" class="goto-compare">Paar-Vergleich</a>: Speichert ihr beide euer Ergebnis, könnt ihr die zwei Dateien dort gegenüberstellen.</p>
+      <p class="save-sub">Zum Aufbewahren — und für den <a href="#" class="goto-compare">Profil-Vergleich</a>: Speichern zwei Personen ihr Ergebnis, lassen sich die beiden Dateien dort gegenüberstellen.</p>
       <div class="save-row">
         <input id="save-name" type="text" placeholder="Dein Vorname" maxlength="40" autocomplete="off">
         <button id="btn-save">Ergebnis speichern</button>
@@ -382,9 +382,9 @@ footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(-
   </div><!-- /view-test -->
 
   <div id="view-compare">
-    <div class="res-eyebrow">Paar-Vergleich</div>
+    <div class="res-eyebrow">Profil-Vergleich</div>
     <h2>Einander besser verstehen</h2>
-    <p class="res-intro">Ladet hier zwei gespeicherte Ergebnis-Dateien — deine und die deines Partners, deiner Partnerin oder einer anderen Person. Ihr seht beide Profile im direkten Vergleich und bekommt Hinweise, wie ihr die Muster des anderen besser einordnen könnt. Die Dateien entstehen im Selbsttest über „Ergebnis speichern".</p>
+    <p class="res-intro">Ladet hier zwei gespeicherte Ergebnis-Dateien — deine und die einer anderen Person: Partnerin, Freund, Kollegin, Familienmitglied. Ihr seht beide Profile im direkten Vergleich und bekommt Hinweise, wie ihr die Muster des anderen besser einordnen könnt. Die Dateien entstehen im Selbsttest über „Ergebnis speichern".</p>
     <div class="cmp-loaders">
       <label class="loader a">
         <input type="file" id="file-a" accept=".json,application/json">
@@ -712,7 +712,7 @@ const STIL_INFO = {
     antrieb: 'Beziehungen kosten Energie — Alleinsein ist keine Notlösung, sondern Erholung.',
     wund: 'Vereinnahmung, erzwungene Geselligkeit, Druck, Gefühle zeigen zu müssen.',
     tipps: [
-      'Nimm Rückzug nicht persönlich — er ist Erholung, kein Liebesentzug.',
+      'Nimm Rückzug nicht persönlich — er ist Erholung, keine Ablehnung.',
       'Plane Alleinzeit fest ein und respektiere sie ohne Nachfragen.',
       'Fordere Gefühlsäußerungen nicht ein — gemeinsames Tun verbindet oft mehr als Reden.',
       'Wenige, ruhige gemeinsame Momente zählen mehr als viele laute.'
@@ -817,7 +817,7 @@ function dynamikHTML(nameA, nameB, leadA, leadB) {
     } else {
       const n = ia.gruppe === 'naehe' ? nameA : nameB;
       const d = ia.gruppe === 'naehe' ? nameB : nameA;
-      paras.push('Klassische Nähe-Distanz-Konstellation: ' + n + ' sucht Verbindung und Reaktion, ' + d + ' braucht Freiraum und Zeit für sich. Typische Falle: Je mehr die eine Seite auf die andere zugeht, desto mehr weicht diese zurück — ein Kreislauf, in dem sich beide unverstanden fühlen. Hilfreich: Nähe planbar machen (feste gemeinsame Zeit) und Rückzug ankündigen statt einfach zu verschwinden — dann ist er kein Liebesentzug.');
+      paras.push('Klassische Nähe-Distanz-Konstellation: ' + n + ' sucht Verbindung und Reaktion, ' + d + ' braucht Freiraum und Zeit für sich. Typische Falle: Je mehr die eine Seite auf die andere zugeht, desto mehr weicht diese zurück — ein Kreislauf, in dem sich beide unverstanden fühlen. Hilfreich: Kontakt planbar machen (feste gemeinsame Zeit) und Rückzug ankündigen statt einfach zu verschwinden — dann wirkt er nicht wie Ablehnung.');
     }
   }
   if (leadA.length > 1 || leadB.length > 1) {
@@ -877,7 +877,7 @@ function renderVergleich() {
   html += dynamikHTML(nameA, nameB, leadA, leadB);
   html += tippsHTML('a', nameA, nameB, leadA);
   html += tippsHTML('b', nameB, nameA, leadB);
-  html += '<div class="disclaimer" style="margin-top:26px"><strong>Wichtig:</strong> Beide Profile zeigen Tendenzen, keine Diagnosen. Die Hinweise sind Gesprächsanregungen für euch — kein Ersatz für eine Paar- oder Fachberatung.</div>';
+  html += '<div class="disclaimer" style="margin-top:26px"><strong>Wichtig:</strong> Beide Profile zeigen Tendenzen, keine Diagnosen. Die Hinweise sind Gesprächsanregungen für euch — kein Ersatz für eine fachliche Beratung.</div>';
 
   out.innerHTML = html;
 }
