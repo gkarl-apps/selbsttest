@@ -606,6 +606,7 @@ sectionsEl.addEventListener('click', (e) => {
   const row = btn.closest('.q-answers');
   row.querySelectorAll('.q-btn').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
+  try { localStorage.setItem('pst-antworten', JSON.stringify(answers)); } catch (e) {}
   updateProgress();
 });
 
@@ -689,6 +690,8 @@ document.getElementById('btn-restart').addEventListener('click', () => {
   document.getElementById('results').classList.remove('show');
   document.getElementById('save-name').value = '';
   document.getElementById('save-hint').textContent = '';
+  document.getElementById('share-panel').classList.remove('show');
+  try { localStorage.removeItem('pst-antworten'); } catch (e) {}
   updateProgress();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
@@ -1079,6 +1082,29 @@ function importAusLink() {
 }
 importAusLink();
 window.addEventListener('hashchange', importAusLink);
+
+/* ── Zwischenstand wiederherstellen (überlebt Neuladen/Unterbrechung) ── */
+(function restauriereAntworten() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('pst-antworten'));
+    if (!saved) return;
+    Object.keys(saved).forEach(k => {
+      const btn = sectionsEl.querySelector('.q-btn[data-key="' + k + '"][data-val="' + saved[k] + '"]');
+      if (btn) { answers[k] = saved[k]; btn.classList.add('selected'); }
+    });
+  } catch (e) {}
+})();
+
+/* ── Demo-Modus zum Testen: Seite mit #demo öffnen ── */
+if (location.hash === '#demo') {
+  blocks.forEach((block, bi) => block.questions.forEach((q, qi) => {
+    const vals = ['1', '0.75', '0.25', '0'];
+    const v = vals[Math.floor(Math.random() * 4)];
+    const btn = sectionsEl.querySelector('.q-btn[data-key="' + bi + '-' + qi + '"][data-val="' + v + '"]');
+    if (btn) btn.click();
+  }));
+  document.getElementById('btn-eval').scrollIntoView();
+}
 
 updateOwnButtons();
 updateProgress();
