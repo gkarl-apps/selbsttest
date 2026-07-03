@@ -226,8 +226,19 @@ h1 {
   border: 1px solid var(--line2); border-radius: 14px;
 }
 .save-box h3 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 19px; margin-bottom: 6px; }
-.save-box .save-sub { font-size: 13.5px; color: var(--ink2); }
+.save-box .save-sub { font-size: 13.5px; color: var(--ink2); line-height: 1.55; }
+.save-box .save-sub + .save-sub { margin-top: 8px; }
 .save-box .save-sub a { color: var(--indigo); }
+.save-box .save-sub strong { color: var(--ink); }
+.share-steps-title { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+.share-steps {
+  margin: 0 0 16px; padding-left: 22px;
+  font-size: 13.5px; color: var(--ink2); line-height: 1.55;
+  display: grid; gap: 5px;
+}
+.share-panel .save-sub { margin-bottom: 10px; }
+#qr-box { margin-bottom: 20px; }
+.share-panel .share-steps-title { margin-top: 4px; }
 .save-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
 #save-name {
   flex: 1; min-width: 150px;
@@ -402,7 +413,8 @@ footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(-
     <div id="res-list"></div>
     <div class="save-box">
       <h3>Ergebnis sichern &amp; teilen</h3>
-      <p class="save-sub">Als Datei zum Aufbewahren — oder per QR-Code bzw. Link an eine andere Person: Sie öffnet ihn und landet direkt im <a href="#" class="goto-compare">Profil-Vergleich</a> mit deinem Ergebnis.</p>
+      <p class="save-sub"><strong>Als Datei speichern:</strong> Dein Ergebnis wird als kleine Datei auf dein Gerät geladen. So kannst du es aufheben.</p>
+      <p class="save-sub"><strong>QR-Code &amp; Link zeigen:</strong> Du willst dein Ergebnis mit einer anderen Person vergleichen? Dann bekommst du hier einen QR-Code. Die andere Person scannt ihn mit ihrer Handy-Kamera — und sieht sofort den <a href="#" class="goto-compare">Profil-Vergleich</a>. Den Link kannst du ihr auch schicken, zum Beispiel per WhatsApp.</p>
       <div class="save-row">
         <input id="save-name" type="text" placeholder="Dein Vorname" maxlength="40" autocomplete="off">
         <button id="btn-save">Als Datei speichern</button>
@@ -410,12 +422,20 @@ footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(-
       </div>
       <p class="save-hint" id="save-hint"></p>
       <div class="share-panel" id="share-panel">
+        <p class="share-steps-title">So geht es:</p>
+        <ol class="share-steps">
+          <li>Die andere Person öffnet die Kamera auf ihrem Handy.</li>
+          <li>Sie hält die Kamera auf diesen QR-Code.</li>
+          <li>Auf ihrem Bildschirm erscheint ein Link — sie tippt darauf.</li>
+        </ol>
         <div id="qr-box"></div>
+        <p class="share-steps-title">Oder ohne QR-Code:</p>
+        <p class="save-sub">Kopiere den Link und schicke ihn der Person, zum Beispiel per WhatsApp oder E-Mail.</p>
         <div class="link-row">
           <input id="share-link" readonly>
           <button id="btn-copy">Link kopieren</button>
         </div>
-        <p class="share-note">Dein Ergebnis steckt vollständig in diesem Link — es wird nichts hochgeladen oder gespeichert. Die andere Person scannt den Code mit der Handy-Kamera oder öffnet den Link.</p>
+        <p class="share-note">Dein Ergebnis steckt komplett im Link selbst. Es wird nichts ins Internet hochgeladen. Nur wer den Link bekommt, kann dein Ergebnis sehen.</p>
       </div>
     </div>
     <div class="disclaimer">
