@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Source+Sans+3:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -242,6 +243,41 @@ h1 {
 }
 #btn-save:hover { opacity: .9; }
 .save-hint { margin-top: 10px; font-size: 12.5px; color: var(--ink2); min-height: 1em; }
+#btn-share {
+  font-family: 'Source Sans 3', sans-serif; font-size: 14px; font-weight: 600;
+  background: transparent; color: var(--indigo); border: 1px solid var(--indigo);
+  border-radius: 10px; padding: 11px 20px; cursor: pointer; transition: all .15s;
+}
+#btn-share:hover { background: var(--indigo); color: #fff; }
+.share-panel { display: none; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
+.share-panel.show { display: block; }
+#qr-box {
+  width: 212px; padding: 12px; background: #fff; border-radius: 10px;
+  margin: 0 auto 14px; border: 1px solid var(--line);
+}
+#qr-box img, #qr-box canvas, #qr-box table { display: block; margin: 0 auto; }
+.link-row { display: flex; gap: 8px; flex-wrap: wrap; }
+#share-link {
+  flex: 1; min-width: 170px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: var(--ink2);
+  padding: 10px 12px; border: 1px solid var(--line2); border-radius: 10px;
+  background: transparent;
+}
+#btn-copy {
+  font-family: 'Source Sans 3', sans-serif; font-size: 13px; font-weight: 600;
+  background: transparent; border: 1px solid var(--line2); color: var(--ink2);
+  border-radius: 10px; padding: 10px 16px; cursor: pointer; transition: all .15s;
+}
+#btn-copy:hover { border-color: var(--ink2); color: var(--ink); }
+.share-note { margin-top: 10px; font-size: 12.5px; color: var(--ink3); line-height: 1.5; }
+.own-btn {
+  display: none; width: 100%; margin-top: 8px;
+  font-family: 'Source Sans 3', sans-serif; font-size: 12.5px; font-weight: 500;
+  background: transparent; border: 1px solid var(--line2); color: var(--ink2);
+  border-radius: 999px; padding: 8px 12px; cursor: pointer; transition: all .15s;
+}
+.own-btn:hover { border-color: var(--indigo); color: var(--ink); }
+.cmp-hint { margin-top: 14px; font-size: 12.5px; color: var(--ink3); line-height: 1.55; }
 
 /* ── Profil-Vergleich ── */
 #view-compare { display: none; padding: 48px 0 20px; }
@@ -365,13 +401,22 @@ footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(-
     <p class="res-intro" id="res-lead-text"></p>
     <div id="res-list"></div>
     <div class="save-box">
-      <h3>Ergebnis als Datei speichern</h3>
-      <p class="save-sub">Zum Aufbewahren — und für den <a href="#" class="goto-compare">Profil-Vergleich</a>: Speichern zwei Personen ihr Ergebnis, lassen sich die beiden Dateien dort gegenüberstellen.</p>
+      <h3>Ergebnis sichern &amp; teilen</h3>
+      <p class="save-sub">Als Datei zum Aufbewahren — oder per QR-Code bzw. Link an eine andere Person: Sie öffnet ihn und landet direkt im <a href="#" class="goto-compare">Profil-Vergleich</a> mit deinem Ergebnis.</p>
       <div class="save-row">
         <input id="save-name" type="text" placeholder="Dein Vorname" maxlength="40" autocomplete="off">
-        <button id="btn-save">Ergebnis speichern</button>
+        <button id="btn-save">Als Datei speichern</button>
+        <button id="btn-share">QR-Code &amp; Link zeigen</button>
       </div>
       <p class="save-hint" id="save-hint"></p>
+      <div class="share-panel" id="share-panel">
+        <div id="qr-box"></div>
+        <div class="link-row">
+          <input id="share-link" readonly>
+          <button id="btn-copy">Link kopieren</button>
+        </div>
+        <p class="share-note">Dein Ergebnis steckt vollständig in diesem Link — es wird nichts hochgeladen oder gespeichert. Die andere Person scannt den Code mit der Handy-Kamera oder öffnet den Link.</p>
+      </div>
     </div>
     <div class="disclaimer">
       <strong>Wichtig:</strong> Egal, welcher Stil bei dir überwiegt — es handelt sich um Tendenzen, nicht um eine Diagnose oder ein Störungsbild. Dieser Test bietet nur eine erste Orientierung und ersetzt keine fachliche Abklärung.
@@ -386,17 +431,24 @@ footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(-
     <h2>Einander besser verstehen</h2>
     <p class="res-intro">Ladet hier zwei gespeicherte Ergebnis-Dateien — deine und die einer anderen Person: Partnerin, Freund, Kollegin, Familienmitglied. Ihr seht beide Profile im direkten Vergleich und bekommt Hinweise, wie ihr die Muster des anderen besser einordnen könnt. Die Dateien entstehen im Selbsttest über „Ergebnis speichern".</p>
     <div class="cmp-loaders">
-      <label class="loader a">
-        <input type="file" id="file-a" accept=".json,application/json">
-        <div class="who">Person A</div>
-        <div class="state" id="state-a">Datei auswählen …</div>
-      </label>
-      <label class="loader b">
-        <input type="file" id="file-b" accept=".json,application/json">
-        <div class="who">Person B</div>
-        <div class="state" id="state-b">Datei auswählen …</div>
-      </label>
+      <div>
+        <label class="loader a">
+          <input type="file" id="file-a" accept=".json,application/json">
+          <div class="who">Person A</div>
+          <div class="state" id="state-a">Datei auswählen …</div>
+        </label>
+        <button type="button" class="own-btn" data-slot="a"></button>
+      </div>
+      <div>
+        <label class="loader b">
+          <input type="file" id="file-b" accept=".json,application/json">
+          <div class="who">Person B</div>
+          <div class="state" id="state-b">Datei auswählen …</div>
+        </label>
+        <button type="button" class="own-btn" data-slot="b"></button>
+      </div>
     </div>
+    <p class="cmp-hint">Tipp: Hat dir jemand einen QR-Code oder Link geschickt, öffnet sich dieser Bereich automatisch — das empfangene Ergebnis steht dann schon als Person A bereit. Dein eigenes letztes Ergebnis merkt sich dieser Browser und bietet es hier als Knopf an.</p>
     <div id="cmp-output"></div>
   </div>
 
@@ -604,6 +656,8 @@ document.getElementById('btn-eval').addEventListener('click', () => {
     : `Bei dir gleich stark ausgeprägt: ${leaders.map(l => l.style.toLowerCase()).join(' und ')}.`;
   document.getElementById('res-lead-text').textContent = leadText;
 
+  merkeEigenesErgebnis(document.getElementById('save-name').value.trim());
+
   const results = document.getElementById('results');
   results.classList.add('show');
   results.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -658,6 +712,7 @@ document.getElementById('btn-save').addEventListener('click', () => {
   a.href = url; a.download = dateiname;
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 10000);
+  merkeEigenesErgebnis(name, datum);
   hint.textContent = 'Gespeichert als „' + dateiname + '" — auf dem Handy findest du die Datei unter Downloads.';
 });
 
@@ -778,11 +833,9 @@ function ladeDatei(input, slot) {
     if (!gueltig) {
       geladen[slot] = null;
       label.classList.remove('loaded');
-      stateEl.innerHTML = '<span class="err">Keine gültige Ergebnis-Datei.</span><br>Bitte eine Datei wählen, die im Selbsttest über „Ergebnis speichern" erzeugt wurde.';
+      stateEl.innerHTML = '<span class="err">Keine gültige Ergebnis-Datei.</span><br>Bitte eine Datei wählen, die im Selbsttest über „Ergebnis sichern" erzeugt wurde.';
     } else {
-      geladen[slot] = data;
-      label.classList.add('loaded');
-      stateEl.innerHTML = '<div class="loaded-name">' + esc(data.name || 'Ohne Namen') + '</div>Test vom ' + fmtDatum(data.datum || '');
+      setLoaderLoaded(slot, data, 'Test vom ' + fmtDatum(data.datum || ''));
     }
     renderVergleich();
   };
@@ -882,6 +935,133 @@ function renderVergleich() {
   out.innerHTML = html;
 }
 
+/* ── Teilen per QR-Code / Link (Ergebnis steckt im Link, kein Upload) ── */
+const ONLINE_URL = 'https://gkarl-apps.github.io/selbsttest/';
+
+function setLoaderLoaded(slot, data, quelle) {
+  geladen[slot] = data;
+  const label = document.querySelector('.loader.' + slot);
+  label.classList.add('loaded');
+  document.getElementById('state-' + slot).innerHTML =
+    '<div class="loaded-name">' + esc(data.name || 'Ohne Namen') + '</div>' + quelle;
+}
+
+function encodeErgebnis(name, datum) {
+  const s = computeScores().map(x => Math.round(x.score * 4));
+  const json = JSON.stringify({ n: name, d: datum, s: s });
+  const bytes = new TextEncoder().encode(json);
+  let bin = '';
+  bytes.forEach(b => bin += String.fromCharCode(b));
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function decodeErgebnis(code) {
+  const b64 = code.replace(/-/g, '+').replace(/_/g, '/');
+  const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+  const v = JSON.parse(new TextDecoder().decode(bytes));
+  if (!v || !Array.isArray(v.s) || v.s.length !== blocks.length) return null;
+  if (!v.s.every(x => typeof x === 'number' && x >= 0 && x <= 32)) return null;
+  return {
+    typ: 'persoenlichkeitsstile-selbsttest', version: 1,
+    name: String(v.n || '').slice(0, 40), datum: String(v.d || ''),
+    scores: blocks.map((b, i) => ({ style: b.style, score: v.s[i] / 4, max: 8 }))
+  };
+}
+
+document.getElementById('btn-share').addEventListener('click', () => {
+  const nameEl = document.getElementById('save-name');
+  const hint = document.getElementById('save-hint');
+  const name = nameEl.value.trim();
+  if (!name) {
+    hint.textContent = 'Bitte gib zuerst einen Namen ein — er erscheint später im Vergleich.';
+    nameEl.focus();
+    return;
+  }
+  hint.textContent = '';
+  const datum = new Date().toISOString().slice(0, 10);
+  merkeEigenesErgebnis(name, datum);
+  const basis = location.protocol === 'file:' ? ONLINE_URL : location.origin + location.pathname;
+  const url = basis + '#p=' + encodeErgebnis(name, datum);
+  document.getElementById('share-link').value = url;
+  const qrBox = document.getElementById('qr-box');
+  qrBox.innerHTML = '';
+  if (typeof QRCode !== 'undefined') {
+    new QRCode(qrBox, { text: url, width: 188, height: 188, colorDark: '#2B2A28', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+  } else {
+    qrBox.innerHTML = '<p style="font-size:12.5px;color:#5F5E5A;text-align:center;padding:8px">QR-Code konnte nicht erzeugt werden (keine Internetverbindung?) — nutze den Link unten.</p>';
+  }
+  document.getElementById('share-panel').classList.add('show');
+});
+
+document.getElementById('btn-copy').addEventListener('click', () => {
+  const inp = document.getElementById('share-link');
+  const btn = document.getElementById('btn-copy');
+  inp.select(); inp.setSelectionRange(0, 99999);
+  const fertig = () => {
+    btn.textContent = 'Kopiert ✓';
+    setTimeout(() => { btn.textContent = 'Link kopieren'; }, 2000);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(inp.value).then(fertig, () => { document.execCommand('copy'); fertig(); });
+  } else {
+    document.execCommand('copy'); fertig();
+  }
+});
+
+/* ── Eigenes letztes Ergebnis (nur lokal in diesem Browser) ── */
+function merkeEigenesErgebnis(name, datum) {
+  try {
+    localStorage.setItem('pst-eigenes-ergebnis', JSON.stringify({
+      typ: 'persoenlichkeitsstile-selbsttest', version: 1,
+      name: name || '', datum: datum || new Date().toISOString().slice(0, 10),
+      scores: computeScores()
+    }));
+  } catch (e) {}
+  updateOwnButtons();
+}
+
+function eigenesErgebnis() {
+  try {
+    const d = JSON.parse(localStorage.getItem('pst-eigenes-ergebnis'));
+    if (d && d.typ === 'persoenlichkeitsstile-selbsttest' && Array.isArray(d.scores) && d.scores.length === blocks.length) return d;
+  } catch (e) {}
+  return null;
+}
+
+function updateOwnButtons() {
+  const d = eigenesErgebnis();
+  document.querySelectorAll('.own-btn').forEach(b => {
+    b.style.display = d ? 'block' : 'none';
+    if (d) b.textContent = 'Eigenes Ergebnis einsetzen' + (d.name ? ' — ' + d.name : '');
+  });
+}
+
+document.querySelectorAll('.own-btn').forEach(b => b.addEventListener('click', () => {
+  const d = eigenesErgebnis();
+  if (!d) return;
+  if (!d.name) d.name = 'Ich';
+  setLoaderLoaded(b.dataset.slot, d, 'Test vom ' + fmtDatum(d.datum || ''));
+  renderVergleich();
+}));
+
+/* ── Empfangenen Link öffnen (#p=…) ── */
+function importAusLink() {
+  const m = location.hash.match(/[#&]p=([A-Za-z0-9\-_]+)/);
+  if (!m) return;
+  let data = null;
+  try { data = decodeErgebnis(m[1]); } catch (e) {}
+  showView('compare');
+  if (data) {
+    setLoaderLoaded('a', data, 'per Link erhalten');
+    renderVergleich();
+  } else {
+    document.getElementById('state-a').innerHTML = '<span class="err">Der Link konnte nicht gelesen werden.</span><br>Bitte den Link vollständig kopieren oder den QR-Code neu scannen.';
+  }
+}
+importAusLink();
+window.addEventListener('hashchange', importAusLink);
+
+updateOwnButtons();
 updateProgress();
 </script>
 </body>
