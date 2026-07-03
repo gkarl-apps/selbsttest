@@ -449,7 +449,7 @@ footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(-
   <div id="view-compare">
     <div class="res-eyebrow">Profil-Vergleich</div>
     <h2>Einander besser verstehen</h2>
-    <p class="res-intro">Ladet hier zwei gespeicherte Ergebnis-Dateien — deine und die einer anderen Person: Partnerin, Freund, Kollegin, Familienmitglied. Ihr seht beide Profile im direkten Vergleich und bekommt Hinweise, wie ihr die Muster des anderen besser einordnen könnt. Die Dateien entstehen im Selbsttest über „Ergebnis speichern".</p>
+    <p class="res-intro">Hier stehen zwei Ergebnisse nebeneinander. Wichtig: Niemand sieht einzelne Antworten — geteilt und verglichen wird nur die Zusammenfassung der neun Bereiche.</p>
     <div class="cmp-loaders">
       <div>
         <label class="loader a">
@@ -720,8 +720,7 @@ document.getElementById('btn-save').addEventListener('click', () => {
   const data = {
     typ: 'persoenlichkeitsstile-selbsttest', version: 1,
     name, datum,
-    scores: computeScores(),
-    antworten: Object.assign({}, answers)
+    scores: computeScores()
   };
   const slug = name.toLowerCase()
     .replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss')
