@@ -208,6 +208,30 @@ h1 {
 }
 #btn-restart:hover { border-color: var(--ink2); color: var(--ink); }
 
+/* ── Empfangs-Banner & Vergleichs-Knopf ── */
+#link-banner {
+  display: none;
+  margin: 8px 0 16px; padding: 16px 20px;
+  background: var(--paper2); border-radius: 12px;
+  font-size: 14px; line-height: 1.55; color: var(--ink);
+}
+#link-banner .banner-eyebrow {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10.5px;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--clay); margin-bottom: 6px;
+}
+.cta-compare { display: none; margin-top: 30px; text-align: center; }
+.cta-compare.show { display: block; }
+#btn-goto-compare {
+  font-family: 'Source Sans 3', sans-serif; font-size: 15px; font-weight: 600;
+  background: var(--clay); color: #fff; border: none;
+  border-radius: 12px; padding: 15px 28px; cursor: pointer;
+  box-shadow: 0 8px 22px rgba(168,90,58,.28);
+  transition: transform .12s, box-shadow .2s;
+}
+#btn-goto-compare:hover { box-shadow: 0 10px 26px rgba(168,90,58,.36); }
+#btn-goto-compare:active { transform: scale(.98); }
+
 /* ── Modus-Navigation ── */
 .mode-nav { display: flex; gap: 20px; margin-bottom: 26px; }
 .mode-nav a {
@@ -394,6 +418,8 @@ footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(-
 
   <div id="view-test">
 
+  <div id="link-banner"></div>
+
   <div id="progress-bar">
     <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
     <div class="progress-label"><span id="progress-count">0 / 72 beantwortet</span><span>Abschnitt <span id="progress-section">1</span> / 9</span></div>
@@ -411,10 +437,14 @@ footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(-
     <h2 id="res-headline">Dein Profil</h2>
     <p class="res-intro" id="res-lead-text"></p>
     <div id="res-list"></div>
+    <div class="cta-compare" id="cta-compare">
+      <button id="btn-goto-compare"></button>
+      <p class="cta-note" id="cta-compare-note"></p>
+    </div>
     <div class="save-box">
       <h3>Ergebnis sichern &amp; teilen</h3>
-      <p class="save-sub"><strong>Als Datei speichern:</strong> Dein Ergebnis wird als kleine Datei auf dein Gerät geladen. So kannst du es aufheben.</p>
-      <p class="save-sub"><strong>QR-Code &amp; Link zeigen:</strong> Du willst dein Ergebnis mit einer anderen Person vergleichen? Dann bekommst du hier einen QR-Code. Die andere Person scannt ihn mit ihrer Handy-Kamera — und sieht sofort den <a href="#" class="goto-compare">Profil-Vergleich</a>. Den Link kannst du ihr auch schicken, zum Beispiel per WhatsApp.</p>
+      <p class="save-sub"><strong>Als Datei speichern:</strong> So hebst du dein Ergebnis für später auf — es wird als kleine Datei auf dein Gerät geladen.</p>
+      <p class="save-sub"><strong>QR-Code &amp; Link zeigen:</strong> Du willst dein Ergebnis mit einer anderen Person vergleichen? Dann bekommst du hier einen QR-Code. Die andere Person scannt ihn mit ihrer Handy-Kamera — und kann sofort mit dem Test loslegen. Den <a href="#" class="goto-compare">Profil-Vergleich</a> zeigt euch die Seite danach automatisch. Den Link kannst du auch schicken, zum Beispiel per WhatsApp.</p>
       <div class="save-row">
         <input id="save-name" type="text" placeholder="Dein Vorname" maxlength="40" autocomplete="off">
         <button id="btn-save">Als Datei speichern</button>
@@ -679,6 +709,15 @@ document.getElementById('btn-eval').addEventListener('click', () => {
 
   merkeEigenesErgebnis(document.getElementById('save-name').value.trim());
 
+  const cta = document.getElementById('cta-compare');
+  if (empfangenesErgebnis) {
+    document.getElementById('btn-goto-compare').textContent = 'Zum Profil-Vergleich mit ' + (empfangenesErgebnis.name || 'Person A');
+    document.getElementById('cta-compare-note').textContent = 'Euer Vergleich ist bereit — ein Klick genügt.';
+    cta.classList.add('show');
+  } else {
+    cta.classList.remove('show');
+  }
+
   const results = document.getElementById('results');
   results.classList.add('show');
   results.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -691,6 +730,7 @@ document.getElementById('btn-restart').addEventListener('click', () => {
   document.getElementById('save-name').value = '';
   document.getElementById('save-hint').textContent = '';
   document.getElementById('share-panel').classList.remove('show');
+  document.getElementById('cta-compare').classList.remove('show');
   try { localStorage.removeItem('pst-antworten'); } catch (e) {}
   updateProgress();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1067,19 +1107,52 @@ document.querySelectorAll('.own-btn').forEach(b => b.addEventListener('click', (
 }));
 
 /* ── Empfangenen Link öffnen (#p=…) ── */
+let empfangenesErgebnis = null;
+
 function importAusLink() {
   const m = location.hash.match(/[#&]p=([A-Za-z0-9\-_]+)/);
   if (!m) return;
   let data = null;
   try { data = decodeErgebnis(m[1]); } catch (e) {}
-  showView('compare');
-  if (data) {
-    setLoaderLoaded('a', data, 'per Link erhalten');
+  if (!data) {
+    showView('compare');
+    document.getElementById('state-a').innerHTML = '<span class="err">Der Link konnte nicht gelesen werden.</span><br>Bitte den Link vollständig kopieren oder den QR-Code neu scannen.';
+    return;
+  }
+  empfangenesErgebnis = data;
+  setLoaderLoaded('a', data, 'per Link erhalten');
+  const eigen = eigenesErgebnis();
+  if (eigen) {
+    /* Eigenes Ergebnis vorhanden: direkt der fertige Vergleich */
+    if (!eigen.name) eigen.name = 'Ich';
+    setLoaderLoaded('b', eigen, 'Dein Ergebnis vom ' + fmtDatum(eigen.datum || '') + '<br>Zum Ändern: antippen und Datei wählen');
+    showView('compare');
     renderVergleich();
   } else {
-    document.getElementById('state-a').innerHTML = '<span class="err">Der Link konnte nicht gelesen werden.</span><br>Bitte den Link vollständig kopieren oder den QR-Code neu scannen.';
+    /* Noch kein eigenes Ergebnis: erst der Test, mit Hinweis-Banner */
+    showView('test');
+    const banner = document.getElementById('link-banner');
+    banner.innerHTML = '<div class="banner-eyebrow">Einladung zum Vergleich</div><strong>' + esc(data.name || 'Jemand') + '</strong> hat dir ein Ergebnis geschickt. Mach jetzt den Selbsttest — danach zeigt euch die Seite den Profil-Vergleich.';
+    banner.style.display = 'block';
   }
 }
+
+document.getElementById('btn-goto-compare').addEventListener('click', () => {
+  const nameEl = document.getElementById('save-name');
+  const name = nameEl.value.trim();
+  if (!name) {
+    document.getElementById('save-hint').textContent = 'Bitte gib hier noch deinen Vornamen ein — er erscheint im Vergleich.';
+    nameEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    nameEl.focus();
+    return;
+  }
+  merkeEigenesErgebnis(name);
+  const eigen = eigenesErgebnis();
+  setLoaderLoaded('b', eigen, 'Dein Ergebnis von gerade eben');
+  showView('compare');
+  renderVergleich();
+});
+
 importAusLink();
 window.addEventListener('hashchange', importAusLink);
 
