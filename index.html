@@ -239,6 +239,7 @@ h1 {
 }
 .backshare h3 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 20px; margin-bottom: 6px; }
 .backshare p { font-size: 13.5px; color: var(--ink2); line-height: 1.55; margin-bottom: 14px; }
+.backshare p strong { color: var(--ink); }
 #btn-backshare {
   font-family: 'Source Sans 3', sans-serif; font-size: 14.5px; font-weight: 600;
   background: var(--clay); color: #fff; border: none;
@@ -1026,7 +1027,7 @@ function renderVergleich() {
   if (rueckweg) {
     html += '<div class="backshare">'
       + '<h3>Und ' + nameA + '?</h3>'
-      + '<p>' + nameA + ' sieht diesen Vergleich noch nicht. Schick dein Ergebnis zurück — dann seht ihr ihn beide.</p>'
+      + '<p>Sitzt ihr nebeneinander? Dann schaut euch diesen Vergleich einfach <strong>gemeinsam auf diesem Bildschirm</strong> an — fertig.<br>Ist ' + nameA + ' gerade woanders? Dann schick dein Ergebnis rüber:</p>'
       + '<button id="btn-backshare">Schick ' + nameA + ' dein Ergebnis</button>'
       + '<div id="backshare-panel">'
       + '<div id="backshare-qr"></div>'
