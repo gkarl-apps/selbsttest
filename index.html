@@ -337,6 +337,19 @@ h1 {
 }
 .own-btn:hover { border-color: var(--indigo); color: var(--ink); }
 .cmp-hint { margin-top: 14px; font-size: 12.5px; color: var(--ink3); line-height: 1.55; }
+.own-import { margin-top: 18px; text-align: center; }
+.own-import-btn {
+  display: inline-block; cursor: pointer; position: relative;
+  font-family: 'Source Sans 3', sans-serif; font-size: 13px; font-weight: 600; color: var(--ink2);
+  border: 1px solid var(--line2); border-radius: 999px; padding: 9px 18px;
+  transition: all .15s;
+}
+.own-import-btn:hover { border-color: var(--indigo); color: var(--ink); }
+.own-import-btn input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.own-import-btn input:focus-visible + span { outline: 2px solid var(--clay); outline-offset: 3px; }
+.own-import-hint { margin-top: 8px; font-size: 12.5px; color: var(--ink2); min-height: 1em; }
+.own-import-hint .err { color: var(--clay); font-weight: 600; }
+#link-banner a { color: var(--indigo); }
 
 /* ── Profil-Vergleich ── */
 #view-compare { display: none; padding: 48px 0 20px; }
@@ -522,6 +535,13 @@ footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(-
       </div>
     </div>
     <p class="cmp-hint">Tipp: Hat dir jemand einen QR-Code oder Link geschickt, öffnet sich dieser Bereich automatisch — das empfangene Ergebnis steht dann schon als Person A bereit. Dein eigenes letztes Ergebnis merkt sich dieser Browser und bietet es hier als Knopf an.</p>
+    <div class="own-import">
+      <label class="own-import-btn">
+        <input type="file" id="file-own" accept=".json,application/json">
+        <span>Mein gespeichertes Ergebnis auf dieses Gerät holen</span>
+      </label>
+      <p class="own-import-hint" id="own-import-hint"></p>
+    </div>
     <div id="cmp-output"></div>
   </div>
 
@@ -1169,6 +1189,47 @@ function updateOwnButtons() {
   });
 }
 
+/* Gespeicherte Datei als eigenes Ergebnis auf dieses Gerät übernehmen */
+document.getElementById('file-own').addEventListener('change', (e) => {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  const hintEl = document.getElementById('own-import-hint');
+  const reader = new FileReader();
+  reader.onload = () => {
+    let data = null;
+    try { data = JSON.parse(reader.result); } catch (err) {}
+    const gueltig = data && data.typ === 'persoenlichkeitsstile-selbsttest' && Array.isArray(data.scores)
+      && blocks.every(b => data.scores.some(s => s.style === b.style && typeof s.score === 'number'));
+    if (!gueltig) {
+      hintEl.innerHTML = '<span class="err">Keine gültige Ergebnis-Datei.</span> Bitte eine Datei wählen, die über „Ergebnis als Datei speichern" erzeugt wurde.';
+      return;
+    }
+    try {
+      localStorage.setItem('pst-eigenes-ergebnis', JSON.stringify({
+        typ: 'persoenlichkeitsstile-selbsttest', version: 1,
+        name: data.name || '', datum: data.datum || '',
+        scores: blocks.map(b => {
+          const s = data.scores.find(x => x.style === b.style);
+          return { style: b.style, score: s.score, max: s.max || 8 };
+        })
+      }));
+    } catch (err) {}
+    updateOwnButtons();
+    const eigen = eigenesErgebnis();
+    if (!eigen) {
+      hintEl.innerHTML = '<span class="err">Konnte nicht gespeichert werden.</span> Erlaubt dein Browser lokalen Speicher?';
+      return;
+    }
+    hintEl.textContent = 'Übernommen: ' + (data.name || 'Ohne Namen') + (data.datum ? ', Test vom ' + fmtDatum(data.datum) : '') + ' — dieses Gerät kennt dein Ergebnis jetzt.';
+    if (!eigen.name) eigen.name = 'Ich';
+    if (empfangenesErgebnis && geladen.a === empfangenesErgebnis) {
+      setLoaderLoaded('b', eigen, 'Dein Ergebnis vom ' + fmtDatum(eigen.datum || ''));
+      renderVergleich();
+    }
+  };
+  reader.readAsText(file);
+});
+
 document.querySelectorAll('.own-btn').forEach(b => b.addEventListener('click', () => {
   const d = eigenesErgebnis();
   if (!d) return;
@@ -1203,8 +1264,14 @@ function importAusLink() {
     /* Noch kein eigenes Ergebnis: erst der Test, mit Hinweis-Banner */
     showView('test');
     const banner = document.getElementById('link-banner');
-    banner.innerHTML = '<div class="banner-eyebrow">Einladung zum Vergleich</div><strong>' + esc(data.name || 'Jemand') + '</strong> hat dir ein Ergebnis geschickt. Mach jetzt den Selbsttest — danach zeigt euch die Seite den Profil-Vergleich.';
+    banner.innerHTML = '<div class="banner-eyebrow">Einladung zum Vergleich</div><strong>' + esc(data.name || 'Jemand') + '</strong> hat dir ein Ergebnis geschickt. Mach jetzt den Selbsttest — danach zeigt euch die Seite den Profil-Vergleich.<br><a href="#" id="banner-own-import">Du hast dein Ergebnis schon als Datei? Dann hol es hier auf dieses Gerät.</a>';
     banner.style.display = 'block';
+    document.getElementById('banner-own-import').addEventListener('click', (ev) => {
+      ev.preventDefault();
+      showView('compare');
+      document.querySelector('.own-import').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      document.getElementById('file-own').click();
+    });
   }
 }
 
