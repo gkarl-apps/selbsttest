@@ -329,26 +329,6 @@ h1 {
 }
 #btn-copy:hover, #btn-backcopy:hover { border-color: var(--ink2); color: var(--ink); }
 .share-note { margin-top: 10px; font-size: 12.5px; color: var(--ink3); line-height: 1.5; }
-.own-btn {
-  display: none; width: 100%; margin-top: 8px;
-  font-family: 'Source Sans 3', sans-serif; font-size: 12.5px; font-weight: 500;
-  background: transparent; border: 1px solid var(--line2); color: var(--ink2);
-  border-radius: 999px; padding: 8px 12px; cursor: pointer; transition: all .15s;
-}
-.own-btn:hover { border-color: var(--indigo); color: var(--ink); }
-.cmp-hint { margin-top: 14px; font-size: 12.5px; color: var(--ink3); line-height: 1.55; }
-.own-import { margin-top: 18px; text-align: center; }
-.own-import-btn {
-  display: inline-block; cursor: pointer; position: relative;
-  font-family: 'Source Sans 3', sans-serif; font-size: 13px; font-weight: 600; color: var(--ink2);
-  border: 1px solid var(--line2); border-radius: 999px; padding: 9px 18px;
-  transition: all .15s;
-}
-.own-import-btn:hover { border-color: var(--indigo); color: var(--ink); }
-.own-import-btn input { position: absolute; width: 1px; height: 1px; opacity: 0; }
-.own-import-btn input:focus-visible + span { outline: 2px solid var(--clay); outline-offset: 3px; }
-.own-import-hint { margin-top: 8px; font-size: 12.5px; color: var(--ink2); min-height: 1em; }
-.own-import-hint .err { color: var(--clay); font-weight: 600; }
 #link-banner a { color: var(--indigo); }
 .state-note {
   display: none; margin: 12px 0 0;
@@ -529,27 +509,17 @@ footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(-
       <div>
         <label class="loader a">
           <input type="file" id="file-a" accept=".json,application/json">
-          <div class="who">Person A</div>
-          <div class="state" id="state-a">Datei auswählen …</div>
+          <div class="who">Die andere Person</div>
+          <div class="state" id="state-a">Ihr Ergebnis kommt per QR-Code oder Link von selbst hierher.<br>Oder: Antippen und ihre Datei wählen.</div>
         </label>
-        <button type="button" class="own-btn" data-slot="a"></button>
       </div>
       <div>
         <label class="loader b">
           <input type="file" id="file-b" accept=".json,application/json">
-          <div class="who">Person B</div>
-          <div class="state" id="state-b">Datei auswählen …</div>
+          <div class="who">Du</div>
+          <div class="state" id="state-b">Dein Ergebnis erscheint hier von selbst, sobald dieses Gerät eines kennt.<br>Oder: Antippen und deine gespeicherte Datei wählen.</div>
         </label>
-        <button type="button" class="own-btn" data-slot="b"></button>
       </div>
-    </div>
-    <p class="cmp-hint">Tipp: Hat dir jemand einen QR-Code oder Link geschickt, öffnet sich dieser Bereich automatisch — das empfangene Ergebnis steht dann schon als Person A bereit. Dein eigenes letztes Ergebnis merkt sich dieser Browser und bietet es hier als Knopf an.</p>
-    <div class="own-import">
-      <label class="own-import-btn">
-        <input type="file" id="file-own" accept=".json,application/json">
-        <span>Mein gespeichertes Ergebnis auf dieses Gerät holen</span>
-      </label>
-      <p class="own-import-hint" id="own-import-hint"></p>
     </div>
     <div id="cmp-output"></div>
   </div>
@@ -799,6 +769,7 @@ function showView(which) {
   document.getElementById('view-compare').classList.toggle('show', compare);
   document.getElementById('nav-test').classList.toggle('active', !compare);
   document.getElementById('nav-compare').classList.toggle('active', compare);
+  if (compare && typeof autoFuelleDu === 'function') autoFuelleDu();
   window.scrollTo(0, 0);
 }
 document.getElementById('nav-test').addEventListener('click', e => { e.preventDefault(); showView('test'); });
@@ -822,7 +793,6 @@ function sichereName(d) {
     const stored = JSON.parse(localStorage.getItem('pst-eigenes-ergebnis'));
     if (stored) { stored.name = n; localStorage.setItem('pst-eigenes-ergebnis', JSON.stringify(stored)); }
   } catch (e) {}
-  updateOwnButtons();
   return true;
 }
 
@@ -973,7 +943,11 @@ function ladeDatei(input, slot) {
     if (!gueltig) {
       geladen[slot] = null;
       label.classList.remove('loaded');
-      stateEl.innerHTML = '<span class="err">Keine gültige Ergebnis-Datei.</span><br>Bitte eine Datei wählen, die im Selbsttest über „Ergebnis sichern" erzeugt wurde.';
+      stateEl.innerHTML = '<span class="err">Keine gültige Ergebnis-Datei.</span><br>Bitte eine Datei wählen, die über „Ergebnis als Datei speichern" erzeugt wurde.';
+    } else if (slot === 'b') {
+      /* Deine Seite: Datei wird zugleich als dein Ergebnis auf diesem Gerät gemerkt */
+      const eigen = merkeErgebnisDaten(data);
+      setLoaderLoaded('b', eigen, 'Test vom ' + fmtDatum(eigen.datum || '') + '<br>Als dein Ergebnis auf diesem Gerät gemerkt');
     } else {
       setLoaderLoaded(slot, data, 'Test vom ' + fmtDatum(data.datum || ''));
     }
@@ -1201,7 +1175,6 @@ function merkeEigenesErgebnis(name, datum) {
       scores: computeScores()
     }));
   } catch (e) {}
-  updateOwnButtons();
 }
 
 function eigenesErgebnis() {
@@ -1212,61 +1185,29 @@ function eigenesErgebnis() {
   return null;
 }
 
-function updateOwnButtons() {
-  const d = eigenesErgebnis();
-  document.querySelectorAll('.own-btn').forEach(b => {
-    b.style.display = d ? 'block' : 'none';
-    if (d) b.textContent = 'Eigenes Ergebnis einsetzen' + (d.name ? ' — ' + d.name : '');
-  });
+/* Beliebige Ergebnis-Daten (z. B. aus Datei) als eigenes Ergebnis merken */
+function merkeErgebnisDaten(data) {
+  const eigen = {
+    typ: 'persoenlichkeitsstile-selbsttest', version: 1,
+    name: data.name || '', datum: data.datum || '',
+    scores: blocks.map(b => {
+      const s = data.scores.find(x => x.style === b.style);
+      return { style: b.style, score: s.score, max: s.max || 8 };
+    })
+  };
+  try { localStorage.setItem('pst-eigenes-ergebnis', JSON.stringify(eigen)); } catch (e) {}
+  return eigen;
 }
 
-/* Gespeicherte Datei als eigenes Ergebnis auf dieses Gerät übernehmen */
-document.getElementById('file-own').addEventListener('change', (e) => {
-  const file = e.target.files && e.target.files[0];
-  if (!file) return;
-  const hintEl = document.getElementById('own-import-hint');
-  const reader = new FileReader();
-  reader.onload = () => {
-    let data = null;
-    try { data = JSON.parse(reader.result); } catch (err) {}
-    const gueltig = data && data.typ === 'persoenlichkeitsstile-selbsttest' && Array.isArray(data.scores)
-      && blocks.every(b => data.scores.some(s => s.style === b.style && typeof s.score === 'number'));
-    if (!gueltig) {
-      hintEl.innerHTML = '<span class="err">Keine gültige Ergebnis-Datei.</span> Bitte eine Datei wählen, die über „Ergebnis als Datei speichern" erzeugt wurde.';
-      return;
-    }
-    try {
-      localStorage.setItem('pst-eigenes-ergebnis', JSON.stringify({
-        typ: 'persoenlichkeitsstile-selbsttest', version: 1,
-        name: data.name || '', datum: data.datum || '',
-        scores: blocks.map(b => {
-          const s = data.scores.find(x => x.style === b.style);
-          return { style: b.style, score: s.score, max: s.max || 8 };
-        })
-      }));
-    } catch (err) {}
-    updateOwnButtons();
-    const eigen = eigenesErgebnis();
-    if (!eigen) {
-      hintEl.innerHTML = '<span class="err">Konnte nicht gespeichert werden.</span> Erlaubt dein Browser lokalen Speicher?';
-      return;
-    }
-    hintEl.textContent = 'Übernommen: ' + (data.name || 'Ohne Namen') + (data.datum ? ', Test vom ' + fmtDatum(data.datum) : '') + ' — dieses Gerät kennt dein Ergebnis jetzt.';
-    if (eigen.name && empfangenesErgebnis && geladen.a === empfangenesErgebnis) {
-      setLoaderLoaded('b', eigen, 'Dein Ergebnis vom ' + fmtDatum(eigen.datum || ''));
-      renderVergleich();
-    }
-  };
-  reader.readAsText(file);
-});
-
-document.querySelectorAll('.own-btn').forEach(b => b.addEventListener('click', () => {
-  const d = eigenesErgebnis();
-  if (!d) return;
-  if (!sichereName(d)) return;
-  setLoaderLoaded(b.dataset.slot, d, 'Test vom ' + fmtDatum(d.datum || ''));
-  renderVergleich();
-}));
+/* Deine Seite im Vergleich füllt sich von selbst, wenn dieses Gerät ein Ergebnis kennt */
+function autoFuelleDu() {
+  if (geladen.b) return;
+  const eigen = eigenesErgebnis();
+  if (eigen && eigen.name) {
+    setLoaderLoaded('b', eigen, 'Dein Ergebnis vom ' + fmtDatum(eigen.datum || '') + '<br>Zum Ändern: antippen und Datei wählen');
+    renderVergleich();
+  }
+}
 
 /* ── Empfangenen Link öffnen (#p=…) ── */
 let empfangenesErgebnis = null;
@@ -1301,8 +1242,7 @@ function importAusLink() {
     document.getElementById('banner-own-import').addEventListener('click', (ev) => {
       ev.preventDefault();
       showView('compare');
-      document.querySelector('.own-import').scrollIntoView({ behavior: 'smooth', block: 'center' });
-      document.getElementById('file-own').click();
+      document.getElementById('file-b').click();
     });
   }
 }
@@ -1369,7 +1309,7 @@ if (location.hash === '#demo') {
   document.getElementById('btn-eval').scrollIntoView();
 }
 
-updateOwnButtons();
+autoFuelleDu();
 updateProgress();
 </script>
 </body>
