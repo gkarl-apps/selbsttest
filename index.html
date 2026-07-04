@@ -350,6 +350,13 @@ h1 {
 .own-import-hint { margin-top: 8px; font-size: 12.5px; color: var(--ink2); min-height: 1em; }
 .own-import-hint .err { color: var(--clay); font-weight: 600; }
 #link-banner a { color: var(--indigo); }
+.state-note {
+  display: none; margin: 12px 0 0;
+  font-size: 12.5px; color: var(--ink2); line-height: 1.55;
+}
+.state-note.show { display: block; }
+.state-note strong { color: var(--clay); }
+.state-note a { color: var(--indigo); }
 
 /* ── Profil-Vergleich ── */
 #view-compare { display: none; padding: 48px 0 20px; }
@@ -461,6 +468,8 @@ footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(-
     <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
     <div class="progress-label"><span id="progress-count">0 / 72 beantwortet</span><span>Abschnitt <span id="progress-section">1</span> / 9</span></div>
   </div>
+
+  <p class="state-note" id="state-note"></p>
 
   <div id="sections"></div>
 
@@ -796,6 +805,27 @@ document.getElementById('nav-test').addEventListener('click', e => { e.preventDe
 document.getElementById('nav-compare').addEventListener('click', e => { e.preventDefault(); showView('compare'); });
 document.querySelectorAll('.goto-compare').forEach(a => a.addEventListener('click', e => { e.preventDefault(); showView('compare'); }));
 
+/* Ein Name, zwei Eingabestellen — immer synchron halten */
+(function syncNamen() {
+  const a = document.getElementById('save-name'), b = document.getElementById('cta-name');
+  a.addEventListener('input', () => { b.value = a.value; });
+  b.addEventListener('input', () => { a.value = b.value; });
+})();
+
+/* Ergebnisse reisen nie ohne Namen: einmalige Nachfrage statt „Ich"-Ersatz */
+function sichereName(d) {
+  if (d.name) return true;
+  const n = (window.prompt('Wie ist dein Vorname? Er erscheint im Vergleich.') || '').trim();
+  if (!n) return false;
+  d.name = n;
+  try {
+    const stored = JSON.parse(localStorage.getItem('pst-eigenes-ergebnis'));
+    if (stored) { stored.name = n; localStorage.setItem('pst-eigenes-ergebnis', JSON.stringify(stored)); }
+  } catch (e) {}
+  updateOwnButtons();
+  return true;
+}
+
 /* ── Ergebnis als Datei speichern ── */
 document.getElementById('btn-save').addEventListener('click', (e) => {
   e.preventDefault();
@@ -1061,7 +1091,8 @@ function renderVergleich() {
   if (rueckweg) {
     document.getElementById('btn-backshare').addEventListener('click', () => {
       const eigene = geladen.b;
-      const url = linkBasis() + '#p=' + encodeErgebnis(eigene.name || 'Ich', eigene.datum || new Date().toISOString().slice(0, 10), eigene.scores);
+      if (!sichereName(eigene)) return;
+      const url = linkBasis() + '#p=' + encodeErgebnis(eigene.name, eigene.datum || new Date().toISOString().slice(0, 10), eigene.scores);
       zeigeQR(document.getElementById('backshare-qr'), url);
       document.getElementById('backshare-panel').classList.add('show');
       const backcopy = document.getElementById('btn-backcopy');
@@ -1221,8 +1252,7 @@ document.getElementById('file-own').addEventListener('change', (e) => {
       return;
     }
     hintEl.textContent = 'Übernommen: ' + (data.name || 'Ohne Namen') + (data.datum ? ', Test vom ' + fmtDatum(data.datum) : '') + ' — dieses Gerät kennt dein Ergebnis jetzt.';
-    if (!eigen.name) eigen.name = 'Ich';
-    if (empfangenesErgebnis && geladen.a === empfangenesErgebnis) {
+    if (eigen.name && empfangenesErgebnis && geladen.a === empfangenesErgebnis) {
       setLoaderLoaded('b', eigen, 'Dein Ergebnis vom ' + fmtDatum(eigen.datum || ''));
       renderVergleich();
     }
@@ -1233,7 +1263,7 @@ document.getElementById('file-own').addEventListener('change', (e) => {
 document.querySelectorAll('.own-btn').forEach(b => b.addEventListener('click', () => {
   const d = eigenesErgebnis();
   if (!d) return;
-  if (!d.name) d.name = 'Ich';
+  if (!sichereName(d)) return;
   setLoaderLoaded(b.dataset.slot, d, 'Test vom ' + fmtDatum(d.datum || ''));
   renderVergleich();
 }));
@@ -1254,12 +1284,14 @@ function importAusLink() {
   empfangenesErgebnis = data;
   setLoaderLoaded('a', data, 'per Link erhalten');
   const eigen = eigenesErgebnis();
-  if (eigen) {
-    /* Eigenes Ergebnis vorhanden: direkt der fertige Vergleich */
-    if (!eigen.name) eigen.name = 'Ich';
+  if (eigen && eigen.name) {
+    /* Eigenes Ergebnis mit Namen vorhanden: direkt der fertige Vergleich */
     setLoaderLoaded('b', eigen, 'Dein Ergebnis vom ' + fmtDatum(eigen.datum || '') + '<br>Zum Ändern: antippen und Datei wählen');
     showView('compare');
     renderVergleich();
+  } else if (eigen) {
+    /* Eigenes Ergebnis ohne Namen: Vergleich zeigen, der Einsetzen-Knopf fragt nach dem Namen */
+    showView('compare');
   } else {
     /* Noch kein eigenes Ergebnis: erst der Test, mit Hinweis-Banner */
     showView('test');
@@ -1294,15 +1326,34 @@ document.getElementById('btn-goto-compare').addEventListener('click', () => {
 importAusLink();
 window.addEventListener('hashchange', importAusLink);
 
+/* ── Anzeige: Woher stammen die Antworten auf diesem Gerät? ── */
+function zeigeStateNote(text) {
+  const el = document.getElementById('state-note');
+  el.innerHTML = text + ' <a href="#" id="clear-answers">Von vorn beginnen</a>';
+  el.classList.add('show');
+  document.getElementById('clear-answers').addEventListener('click', (ev) => {
+    ev.preventDefault();
+    Object.keys(answers).forEach(k => delete answers[k]);
+    document.querySelectorAll('.q-btn').forEach(b => b.classList.remove('selected'));
+    document.getElementById('results').classList.remove('show');
+    try { localStorage.removeItem('pst-antworten'); } catch (e) {}
+    el.classList.remove('show');
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+
 /* ── Zwischenstand wiederherstellen (überlebt Neuladen/Unterbrechung) ── */
 (function restauriereAntworten() {
   try {
     const saved = JSON.parse(localStorage.getItem('pst-antworten'));
     if (!saved) return;
+    let n = 0;
     Object.keys(saved).forEach(k => {
       const btn = sectionsEl.querySelector('.q-btn[data-key="' + k + '"][data-val="' + saved[k] + '"]');
-      if (btn) { answers[k] = saved[k]; btn.classList.add('selected'); }
+      if (btn) { answers[k] = saved[k]; btn.classList.add('selected'); n++; }
     });
+    if (n > 0) zeigeStateNote('Auf diesem Gerät gemerkte Antworten wurden geladen (' + n + ' von ' + TOTAL_Q + ').');
   } catch (e) {}
 })();
 
@@ -1314,6 +1365,7 @@ if (location.hash === '#demo') {
     const btn = sectionsEl.querySelector('.q-btn[data-key="' + bi + '-' + qi + '"][data-val="' + v + '"]');
     if (btn) btn.click();
   }));
+  zeigeStateNote('<strong>Demo-Modus:</strong> Alle ' + TOTAL_Q + ' Antworten wurden zufällig ausgefüllt — das ist kein echtes Profil.');
   document.getElementById('btn-eval').scrollIntoView();
 }
 
