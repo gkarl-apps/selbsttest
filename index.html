@@ -362,6 +362,13 @@ h1 {
 .loader.a .who { color: var(--indigo); }
 .loader.b .who { color: var(--clay); }
 .loader .state { font-size: 13.5px; color: var(--ink2); line-height: 1.5; }
+.loader .state strong { color: var(--ink); }
+.loader-steps {
+  text-align: left; margin: 10px 0 2px; padding-left: 22px;
+  display: grid; gap: 5px; font-size: 13px;
+}
+.state-alt { display: block; margin-top: 8px; font-size: 12.5px; }
+.state-file { color: var(--ink3); }
 .loader .loaded-name { font-family: 'Fraunces', serif; font-size: 20px; color: var(--ink); }
 .loader.loaded { border-style: solid; }
 .loader.a.loaded { border-color: var(--indigo); }
@@ -508,17 +515,27 @@ footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(-
     <p class="res-intro">Vergleich der Persönlichkeitsprofile. Wichtig: Niemand sieht einzelne Antworten — geteilt und verglichen wird nur die Zusammenfassung der neun Bereiche.</p>
     <div class="cmp-loaders">
       <div>
-        <label class="loader a">
-          <input type="file" id="file-a" accept=".json,application/json">
-          <div class="who">Die andere Person</div>
-          <div class="state" id="state-a">Ihr Ergebnis kommt per QR-Code oder Link von selbst hierher.<br>Oder: Antippen und ihre Datei wählen.</div>
-        </label>
-      </div>
-      <div>
         <label class="loader b">
           <input type="file" id="file-b" accept=".json,application/json">
           <div class="who">Du</div>
-          <div class="state" id="state-b">Dein Ergebnis erscheint hier von selbst, sobald dieses Gerät eines kennt.<br>Oder: Antippen und deine gespeicherte Datei wählen.</div>
+          <div class="state" id="state-b">Dein Ergebnis erscheint hier von selbst, sobald du den Test gemacht hast.<br>Oder: Antippen und deine gespeicherte Datei wählen.</div>
+        </label>
+      </div>
+      <div>
+        <label class="loader a">
+          <input type="file" id="file-a" accept=".json,application/json">
+          <div class="who">Die andere Person</div>
+          <div class="state" id="state-a">
+            Ihr Ergebnis fehlt noch — so kommt es hierher:
+            <ol class="loader-steps">
+              <li>Sie tippt bei <strong>ihrem</strong> Ergebnis auf „Mit jemandem vergleichen".</li>
+              <li>Ihr Handy zeigt einen QR-Code.</li>
+              <li>Du scannst ihn mit deiner Handy-Kamera — der Vergleich öffnet sich von selbst.</li>
+            </ol>
+            <span class="state-alt">Oder sie schickt dir ihren Link, z. B. per WhatsApp.</span>
+            <span class="state-alt">Hat sie noch kein Ergebnis? Schick ihr deinen QR-Code — den Rest erklärt ihr die Seite.</span>
+            <span class="state-alt state-file">(Ihre Datei geht auch: dieses Feld antippen.)</span>
+          </div>
         </label>
       </div>
     </div>
