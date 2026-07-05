@@ -427,6 +427,7 @@ footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(-
       <a href="#" id="nav-test" class="active">Selbsttest</a>
       <a href="#" id="nav-compare">Profil-Vergleich</a>
     </nav>
+    <div id="header-intro">
     <div class="eyebrow">Selbsttest · 9 Abschnitte · 72 Fragen</div>
     <h1>Wie tickst du?</h1>
     <p class="sub">Dieser Selbsttest orientiert sich am Modell der Persönlichkeitsstile von Rainer Sachse aus „Wie man sich selbst und anderen auf die Schliche kommt".</p>
@@ -438,6 +439,7 @@ footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(-
     </div>
     <p class="header-cta">Los geht's!</p>
     <p class="header-note">Es gibt kein richtig oder falsch.</p>
+    </div><!-- /header-intro -->
   </header>
 
   <div id="view-test">
@@ -766,6 +768,7 @@ document.getElementById('btn-restart').addEventListener('click', () => {
 function showView(which) {
   const compare = which === 'compare';
   document.getElementById('view-test').style.display = compare ? 'none' : 'block';
+  document.getElementById('header-intro').style.display = compare ? 'none' : 'block';
   document.getElementById('view-compare').classList.toggle('show', compare);
   document.getElementById('nav-test').classList.toggle('active', !compare);
   document.getElementById('nav-compare').classList.toggle('active', compare);
