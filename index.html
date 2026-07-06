@@ -434,7 +434,9 @@ h1 {
 .tip-card li { font-size: 14px; line-height: 1.55; padding-left: 18px; position: relative; }
 .tip-card li::before { content: '→'; position: absolute; left: 0; color: var(--ink3); }
 
-footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(--ink3); }
+footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(--ink3); line-height: 1.7; }
+footer a { color: var(--ink2); }
+footer a:hover { color: var(--ink); }
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
@@ -554,7 +556,8 @@ footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(-
     <div id="cmp-output"></div>
   </div>
 
-  <footer>Basiert auf: Rainer Sachse, „Persönlichkeitsstile" (Junfermann, 2019) — private Arbeitsversion, nicht zur Weitergabe.</footer>
+  <footer>Basiert auf: Rainer Sachse, „Persönlichkeitsstile" (Junfermann, 2019) — private Arbeitsversion, nicht zur Weitergabe.<br>
+  <a href="#" id="btn-forget">Dieses Gerät vergessen</a> — löscht dein gemerktes Ergebnis und alle Antworten hier.</footer>
 </div>
 
 <script>
@@ -1391,6 +1394,19 @@ if (location.hash === '#demo') {
   zeigeStateNote('<strong>Demo-Modus:</strong> Alle ' + TOTAL_Q + ' Antworten wurden zufällig ausgefüllt — das ist kein echtes Profil.');
   document.getElementById('btn-eval').scrollIntoView();
 }
+
+/* ── Dieses Gerät vergessen: alles Gemerkte löschen, frisch starten ── */
+document.getElementById('btn-forget').addEventListener('click', (e) => {
+  e.preventDefault();
+  if (!window.confirm('Wirklich alles auf diesem Gerät löschen? Dein gemerktes Ergebnis und angefangene Antworten werden entfernt. Bereits gespeicherte Dateien bleiben erhalten.')) return;
+  try {
+    localStorage.removeItem('pst-antworten');
+    localStorage.removeItem('pst-eigenes-ergebnis');
+    localStorage.removeItem('pst-geteilt');
+  } catch (err) {}
+  history.replaceState(null, '', location.pathname);
+  location.reload();
+});
 
 autoFuelleDu();
 updateProgress();
