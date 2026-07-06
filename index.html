@@ -321,13 +321,21 @@ h1 {
 }
 #qr-box img, #qr-box canvas, #qr-box table,
 #backshare-qr img, #backshare-qr canvas, #backshare-qr table { display: block; margin: 0 auto; }
-.link-row { text-align: center; }
+.share-rows { display: grid; gap: 8px; max-width: 320px; margin: 0 auto; }
+.share-rows button { width: 100%; }
+#btn-webshare, #btn-backwebshare {
+  font-family: 'Source Sans 3', sans-serif; font-size: 14px; font-weight: 600;
+  background: var(--indigo); color: #fff; border: none; border-radius: 10px;
+  padding: 12px 20px; cursor: pointer; transition: opacity .15s;
+}
+#btn-webshare:hover, #btn-backwebshare:hover { opacity: .9; }
 #btn-copy, #btn-backcopy {
   font-family: 'Source Sans 3', sans-serif; font-size: 13px; font-weight: 600;
   background: transparent; border: 1px solid var(--line2); color: var(--ink2);
   border-radius: 10px; padding: 10px 16px; cursor: pointer; transition: all .15s;
 }
 #btn-copy:hover, #btn-backcopy:hover { border-color: var(--ink2); color: var(--ink); }
+.share-mini { margin-top: 8px; font-size: 11.5px; color: var(--ink3); text-align: center; }
 .share-note { margin-top: 10px; font-size: 12.5px; color: var(--ink3); line-height: 1.5; }
 #link-banner a { color: var(--indigo); }
 .state-note {
@@ -500,9 +508,11 @@ footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(-
           <li>Auf ihrem Bildschirm erscheint ein Link. Sie tippt darauf — das öffnet den Link.</li>
         </ol>
         <div id="qr-box"></div>
-        <div class="link-row">
-          <button id="btn-copy">Oder: Link kopieren und schicken (per E-Mail, WhatsApp etc.)</button>
+        <div class="share-rows">
+          <button id="btn-webshare">Link teilen …</button>
+          <button id="btn-copy">Oder: Link kopieren</button>
         </div>
+        <p class="share-mini" id="share-mini">„Link teilen" öffnet das Teilen-Menü deines Handys — AirDrop, WhatsApp, E-Mail und mehr.</p>
         <p class="share-note">Die andere Person muss den Link nur öffnen. Dein Ergebnis steckt komplett im Link selbst — es wird nichts ins Internet hochgeladen. Nur wer den Link bekommt, kann dein Ergebnis sehen.</p>
       </div>
       <p class="file-line"><a href="#" id="btn-save">Dein Testergebnis als Datei sichern</a> — für später oder zum Verschicken an andere.</p>
@@ -1071,16 +1081,21 @@ function renderVergleich() {
   html += tippsHTML('b', nameB, nameA, leadB);
   html += '<div class="disclaimer" style="margin-top:26px"><strong>Wichtig:</strong> Beide Profile zeigen Tendenzen, keine Diagnosen. Die Hinweise sind Gesprächsanregungen für euch — kein Ersatz für eine fachliche Beratung.</div>';
 
-  /* Rückweg: eigenes Ergebnis an die Person zurückschicken, die eingeladen hat */
-  const rueckweg = empfangenesErgebnis && geladen.a === empfangenesErgebnis && geladen.b;
+  /* Rückweg-Karte nur, wenn die andere Seite den Vergleich vermutlich noch nicht hat:
+     entfällt, sobald dieses Gerät selbst schon geteilt hat oder der Link eine Antwort war */
+  const rueckweg = empfangenesErgebnis && geladen.a === empfangenesErgebnis && geladen.b
+    && !empfangenIstAntwort && !hatGeteilt();
   if (rueckweg) {
     html += '<div class="backshare">'
       + '<h3>Und ' + nameA + '?</h3>'
-      + '<p>Sitzt ihr nebeneinander? Dann schaut euch diesen Vergleich einfach <strong>gemeinsam auf diesem Bildschirm</strong> an — fertig.<br>Ist ' + nameA + ' gerade woanders? Dann schick dein Ergebnis rüber:</p>'
+      + '<p>Sitzt ihr nebeneinander? Dann schaut einfach <strong>gemeinsam auf diesen Bildschirm</strong>.<br><strong>Sieht ' + nameA + ' den Vergleich noch nicht?</strong> Dann schick dein Ergebnis rüber:</p>'
       + '<button id="btn-backshare">Schick ' + nameA + ' dein Ergebnis</button>'
       + '<div id="backshare-panel">'
       + '<div id="backshare-qr"></div>'
-      + '<div class="link-row"><button id="btn-backcopy">Oder: Link kopieren und schicken (per E-Mail, WhatsApp etc.)</button></div>'
+      + '<div class="share-rows">'
+      + (navigator.share ? '<button id="btn-backwebshare">Link teilen …</button>' : '')
+      + '<button id="btn-backcopy">Oder: Link kopieren</button>'
+      + '</div>'
       + '<p class="share-note">' + nameA + ' scannt den Code oder öffnet den Link — und sieht sofort euren Vergleich.</p>'
       + '</div></div>';
   }
@@ -1091,11 +1106,14 @@ function renderVergleich() {
     document.getElementById('btn-backshare').addEventListener('click', () => {
       const eigene = geladen.b;
       if (!sichereName(eigene)) return;
-      const url = linkBasis() + '#p=' + encodeErgebnis(eigene.name, eigene.datum || new Date().toISOString().slice(0, 10), eigene.scores);
+      const url = linkBasis() + '#p=' + encodeErgebnis(eigene.name, eigene.datum || new Date().toISOString().slice(0, 10), eigene.scores, true);
       zeigeQR(document.getElementById('backshare-qr'), url);
       document.getElementById('backshare-panel').classList.add('show');
+      merkeGeteilt();
       const backcopy = document.getElementById('btn-backcopy');
       backcopy.onclick = () => kopiereLink(url, backcopy);
+      const backshareBtn = document.getElementById('btn-backwebshare');
+      if (backshareBtn) backshareBtn.onclick = () => teileLink(url);
     });
   }
 }
@@ -1112,9 +1130,11 @@ function setLoaderLoaded(slot, data, quelle) {
   document.getElementById('file-btn-' + slot).textContent = 'Andere Datei wählen';
 }
 
-function encodeErgebnis(name, datum, scoresArr) {
+function encodeErgebnis(name, datum, scoresArr, antwort) {
   const s = (scoresArr || computeScores()).map(x => Math.round(x.score * 4));
-  const json = JSON.stringify({ n: name, d: datum, s: s });
+  const obj = { n: name, d: datum, s: s };
+  if (antwort) obj.r = 1;
+  const json = JSON.stringify(obj);
   const bytes = new TextEncoder().encode(json);
   let bin = '';
   bytes.forEach(b => bin += String.fromCharCode(b));
@@ -1130,8 +1150,25 @@ function decodeErgebnis(code) {
   return {
     typ: 'persoenlichkeitsstile-selbsttest', version: 1,
     name: String(v.n || '').slice(0, 40), datum: String(v.d || ''),
+    antwort: !!v.r,
     scores: blocks.map((b, i) => ({ style: b.style, score: v.s[i] / 4, max: 8 }))
   };
+}
+
+/* Merker: Von diesem Gerät wurde das eigene Ergebnis schon geteilt */
+function merkeGeteilt() {
+  try { localStorage.setItem('pst-geteilt', '1'); } catch (e) {}
+}
+function hatGeteilt() {
+  try { return localStorage.getItem('pst-geteilt') === '1'; } catch (e) { return false; }
+}
+
+/* Teilen-Menü des Geräts öffnen (AirDrop, WhatsApp, E-Mail …) */
+function teileLink(url) {
+  merkeGeteilt();
+  if (navigator.share) {
+    navigator.share({ title: 'Persönlichkeitsstile — Profil-Vergleich', url: url }).catch(() => {});
+  }
 }
 
 document.getElementById('btn-share').addEventListener('click', () => {
@@ -1149,7 +1186,16 @@ document.getElementById('btn-share').addEventListener('click', () => {
   shareUrl = linkBasis() + '#p=' + encodeErgebnis(name, datum);
   zeigeQR(document.getElementById('qr-box'), shareUrl);
   document.getElementById('share-panel').classList.add('show');
+  merkeGeteilt();
 });
+
+document.getElementById('btn-webshare').addEventListener('click', () => {
+  teileLink(shareUrl);
+});
+if (!navigator.share) {
+  document.getElementById('btn-webshare').style.display = 'none';
+  document.getElementById('share-mini').style.display = 'none';
+}
 
 let shareUrl = '';
 
@@ -1167,6 +1213,7 @@ function zeigeQR(box, url) {
 }
 
 function kopiereLink(url, btn) {
+  merkeGeteilt();
   const alt = btn.textContent;
   const fertig = () => {
     btn.textContent = 'Link kopiert ✓ — jetzt z. B. in WhatsApp einfügen und abschicken';
@@ -1237,6 +1284,7 @@ function autoFuelleDu() {
 
 /* ── Empfangenen Link öffnen (#p=…) ── */
 let empfangenesErgebnis = null;
+let empfangenIstAntwort = false;
 
 function importAusLink() {
   const m = location.hash.match(/[#&]p=([A-Za-z0-9\-_]+)/);
@@ -1249,6 +1297,7 @@ function importAusLink() {
     return;
   }
   empfangenesErgebnis = data;
+  empfangenIstAntwort = !!data.antwort;
   setLoaderLoaded('a', data, 'per Link erhalten');
   const eigen = eigenesErgebnis();
   if (eigen && eigen.name) {
