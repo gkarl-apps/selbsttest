@@ -501,11 +501,11 @@ footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(-
         </ol>
         <div id="qr-box"></div>
         <div class="link-row">
-          <button id="btn-copy">Oder: Link kopieren und per WhatsApp schicken</button>
+          <button id="btn-copy">Oder: Link kopieren und schicken (per E-Mail, WhatsApp etc.)</button>
         </div>
         <p class="share-note">Die andere Person muss den Link nur öffnen. Dein Ergebnis steckt komplett im Link selbst — es wird nichts ins Internet hochgeladen. Nur wer den Link bekommt, kann dein Ergebnis sehen.</p>
       </div>
-      <p class="file-line"><a href="#" id="btn-save">Dein Ergebnis als Datei sichern</a> — für später oder zum Verschicken an andere.</p>
+      <p class="file-line"><a href="#" id="btn-save">Dein Testergebnis als Datei sichern</a> — für später oder zum Verschicken an andere.</p>
     </div>
     <div class="disclaimer">
       <strong>Wichtig:</strong> Egal, welcher Stil bei dir überwiegt — es handelt sich um Tendenzen, nicht um eine Diagnose oder ein Störungsbild. Dieser Test bietet nur eine erste Orientierung und ersetzt keine fachliche Abklärung.
@@ -962,7 +962,7 @@ function ladeDatei(input, slot) {
     if (!gueltig) {
       geladen[slot] = null;
       label.classList.remove('loaded');
-      stateEl.innerHTML = '<span class="err">Keine gültige Ergebnis-Datei.</span><br>Bitte eine Datei wählen, die über „Dein Ergebnis als Datei sichern" erzeugt wurde.';
+      stateEl.innerHTML = '<span class="err">Keine gültige Ergebnis-Datei.</span><br>Bitte eine Datei wählen, die über „Dein Testergebnis als Datei sichern" erzeugt wurde.';
     } else if (slot === 'b') {
       /* Deine Seite: Datei wird zugleich als dein Ergebnis auf diesem Gerät gemerkt */
       const eigen = merkeErgebnisDaten(data);
@@ -1074,7 +1074,7 @@ function renderVergleich() {
       + '<button id="btn-backshare">Schick ' + nameA + ' dein Ergebnis</button>'
       + '<div id="backshare-panel">'
       + '<div id="backshare-qr"></div>'
-      + '<div class="link-row"><button id="btn-backcopy">Oder: Link kopieren und per WhatsApp schicken</button></div>'
+      + '<div class="link-row"><button id="btn-backcopy">Oder: Link kopieren und schicken (per E-Mail, WhatsApp etc.)</button></div>'
       + '<p class="share-note">' + nameA + ' scannt den Code oder öffnet den Link — und sieht sofort euren Vergleich.</p>'
       + '</div></div>';
   }
