@@ -758,8 +758,12 @@ document.getElementById('btn-eval').addEventListener('click', () => {
       ctaName.value = document.getElementById('save-name').value.trim() || (eigenesErgebnis() || {}).name || '';
     }
     cta.classList.add('show');
+    /* Eingeladene brauchen nur den einen Knopf: Teilen-Box weg, Banner hat seinen Dienst getan */
+    document.querySelector('.save-box').style.display = 'none';
+    document.getElementById('link-banner').style.display = 'none';
   } else {
     cta.classList.remove('show');
+    document.querySelector('.save-box').style.display = '';
   }
 
   const results = document.getElementById('results');
@@ -775,6 +779,8 @@ document.getElementById('btn-restart').addEventListener('click', () => {
   document.getElementById('save-hint').textContent = '';
   document.getElementById('share-panel').classList.remove('show');
   document.getElementById('cta-compare').classList.remove('show');
+  document.querySelector('.save-box').style.display = '';
+  if (empfangenesErgebnis) document.getElementById('link-banner').style.display = 'block';
   try { localStorage.removeItem('pst-antworten'); } catch (e) {}
   updateProgress();
   window.scrollTo({ top: 0, behavior: 'smooth' });
