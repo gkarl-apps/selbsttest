@@ -517,8 +517,8 @@ footer { text-align: center; padding: 40px 0 10px; font-size: 12px; color: var(-
         <p class="share-mini" id="share-mini">„Link teilen" öffnet das Teilen-Menü deines Handys — AirDrop, WhatsApp, E-Mail und mehr.</p>
         <p class="share-note">Die andere Person muss den Link nur öffnen. Dein Ergebnis steckt komplett im Link selbst — es wird nichts ins Internet hochgeladen. Nur wer den Link bekommt, kann dein Ergebnis sehen.</p>
       </div>
-      <p class="file-line"><a href="#" id="btn-save">Dein Testergebnis als Datei sichern</a> — für später oder zum Verschicken an andere.</p>
     </div>
+    <p class="file-line"><a href="#" id="btn-save">Dein Testergebnis als Datei sichern</a> — für später oder zum Verschicken an andere.</p>
     <div class="disclaimer">
       <strong>Wichtig:</strong> Egal, welcher Stil bei dir überwiegt — es handelt sich um Tendenzen, nicht um eine Diagnose oder ein Störungsbild. Dieser Test bietet nur eine erste Orientierung und ersetzt keine fachliche Abklärung.
     </div>
@@ -838,10 +838,16 @@ document.getElementById('btn-save').addEventListener('click', (e) => {
   e.preventDefault();
   const nameEl = document.getElementById('save-name');
   const hint = document.getElementById('save-hint');
-  const name = nameEl.value.trim();
+  const name = nameEl.value.trim() || document.getElementById('cta-name').value.trim();
   if (!name) {
-    hint.textContent = 'Bitte gib zuerst einen Namen ein — er erscheint später im Vergleich.';
-    nameEl.focus();
+    if (document.querySelector('.save-box').style.display === 'none') {
+      /* Teilen-Box ausgeblendet (Einladung): Namensfeld am Vergleichs-Knopf nutzen */
+      document.getElementById('cta-compare-note').textContent = 'Trag oben noch deinen Vornamen ein — dann klappt auch das Speichern.';
+      document.getElementById('cta-name').focus();
+    } else {
+      hint.textContent = 'Bitte gib zuerst einen Namen ein — er erscheint später im Vergleich.';
+      nameEl.focus();
+    }
     return;
   }
   const datum = new Date().toISOString().slice(0, 10);
