@@ -233,24 +233,27 @@ h1 {
 }
 #cta-name:focus-visible { outline: 2px solid var(--clay); outline-offset: 1px; }
 
-.backshare {
-  margin-top: 26px; padding: 22px;
-  border: 1px solid var(--line2); border-radius: 14px; text-align: center;
+#fair-gate {
+  display: none;
+  margin-top: 30px; padding: 24px 20px;
+  border: 1.5px solid var(--clay); border-radius: 14px; text-align: center;
 }
-.backshare h3 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 20px; margin-bottom: 6px; }
-.backshare p { font-size: 13.5px; color: var(--ink2); line-height: 1.55; margin-bottom: 14px; }
-.backshare p strong { color: var(--ink); }
-#btn-backshare {
-  font-family: 'Source Sans 3', sans-serif; font-size: 14.5px; font-weight: 600;
+#fair-gate.show { display: block; }
+#fair-gate h3 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 21px; margin-bottom: 8px; }
+#fair-gate p { font-size: 13.5px; color: var(--ink2); line-height: 1.55; margin-bottom: 16px; }
+#fair-gate p strong { color: var(--ink); }
+.fair-weiter-row { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
+#fair-weiter {
+  font-family: 'Source Sans 3', sans-serif; font-size: 15px; font-weight: 600;
   background: var(--clay); color: #fff; border: none;
-  border-radius: 10px; padding: 12px 22px; cursor: pointer;
-  box-shadow: 0 6px 18px rgba(168,90,58,.25);
-  transition: transform .12s, box-shadow .2s;
+  border-radius: 12px; padding: 14px 26px; cursor: pointer;
+  box-shadow: 0 8px 22px rgba(168,90,58,.28);
+  transition: transform .12s, box-shadow .2s, opacity .2s;
 }
-#btn-backshare:hover { box-shadow: 0 8px 22px rgba(168,90,58,.33); }
-#btn-backshare:active { transform: scale(.98); }
-#backshare-panel { display: none; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
-#backshare-panel.show { display: block; }
+#fair-weiter:hover { box-shadow: 0 10px 26px rgba(168,90,58,.36); }
+#fair-weiter:active { transform: scale(.98); }
+#fair-weiter:disabled { opacity: .35; cursor: not-allowed; box-shadow: none; }
+.fair-note { margin-top: 10px; font-size: 12.5px; color: var(--ink3); }
 #btn-goto-compare {
   font-family: 'Source Sans 3', sans-serif; font-size: 15px; font-weight: 600;
   background: var(--clay); color: #fff; border: none;
@@ -315,26 +318,26 @@ h1 {
 .file-line a:hover { color: var(--ink); }
 .share-panel { display: none; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
 .share-panel.show { display: block; }
-#qr-box, #backshare-qr {
+#qr-box, #fair-qr {
   width: 212px; padding: 12px; background: #fff; border-radius: 10px;
   margin: 0 auto 14px; border: 1px solid var(--line);
 }
 #qr-box img, #qr-box canvas, #qr-box table,
-#backshare-qr img, #backshare-qr canvas, #backshare-qr table { display: block; margin: 0 auto; }
+#fair-qr img, #fair-qr canvas, #fair-qr table { display: block; margin: 0 auto; }
 .share-rows { display: grid; gap: 8px; max-width: 320px; margin: 0 auto; }
 .share-rows button { width: 100%; }
-#btn-webshare, #btn-backwebshare {
+#btn-webshare, #fair-webshare {
   font-family: 'Source Sans 3', sans-serif; font-size: 14px; font-weight: 600;
   background: var(--indigo); color: #fff; border: none; border-radius: 10px;
   padding: 12px 20px; cursor: pointer; transition: opacity .15s;
 }
-#btn-webshare:hover, #btn-backwebshare:hover { opacity: .9; }
-#btn-copy, #btn-backcopy {
+#btn-webshare:hover, #fair-webshare:hover { opacity: .9; }
+#btn-copy, #fair-copy, #fair-scanned {
   font-family: 'Source Sans 3', sans-serif; font-size: 13px; font-weight: 600;
   background: transparent; border: 1px solid var(--line2); color: var(--ink2);
   border-radius: 10px; padding: 10px 16px; cursor: pointer; transition: all .15s;
 }
-#btn-copy:hover, #btn-backcopy:hover { border-color: var(--ink2); color: var(--ink); }
+#btn-copy:hover, #fair-copy:hover, #fair-scanned:hover { border-color: var(--ink2); color: var(--ink); }
 .share-mini { margin-top: 8px; font-size: 11.5px; color: var(--ink3); text-align: center; }
 .share-note { margin-top: 10px; font-size: 12.5px; color: var(--ink3); line-height: 1.5; }
 #link-banner a { color: var(--indigo); }
@@ -551,6 +554,20 @@ footer a:hover { color: var(--ink); }
           <span class="state-alt">Hat sie noch kein Ergebnis? Dann zeig ihr den QR-Code zu deinem Ergebnis — oder schick ihr deinen Link per WhatsApp. Sie öffnet ihn, den Rest erklärt ihr die Seite.</span>
         </div>
         <label class="datei-btn"><input type="file" id="file-a" accept=".json,application/json"><span id="file-btn-a">Ihre Datei wählen</span></label>
+      </div>
+    </div>
+    <div id="fair-gate">
+      <h3>Fair ist fair: Erst bekommt <span id="fair-name">…</span> dein Ergebnis</h3>
+      <p><span id="fair-name2">…</span> hat dir ein Ergebnis geschickt. Schick deins zurück — <strong>dann seht ihr beide den Vergleich.</strong></p>
+      <div id="fair-qr"></div>
+      <div class="share-rows">
+        <button id="fair-webshare">Link teilen …</button>
+        <button id="fair-copy">Oder: Link kopieren</button>
+        <button id="fair-scanned">Der Code wurde gescannt ✓</button>
+      </div>
+      <div class="fair-weiter-row">
+        <button id="fair-weiter" disabled>Weiter zum Vergleich</button>
+        <p class="fair-note" id="fair-note">Wird frei, sobald du geteilt hast.</p>
       </div>
     </div>
     <div id="cmp-output"></div>
@@ -1055,7 +1072,15 @@ function tippsHTML(side, name, other, leads) {
 
 function renderVergleich() {
   const out = document.getElementById('cmp-output');
-  if (!geladen.a || !geladen.b) { out.innerHTML = ''; return; }
+  const gate = document.getElementById('fair-gate');
+  if (!geladen.a || !geladen.b) { out.innerHTML = ''; gate.classList.remove('show'); return; }
+  /* Fairness-Sperre: Wer eingeladen wurde, teilt erst sein Ergebnis — dann öffnet sich der Vergleich */
+  if (empfangenesErgebnis && geladen.a === empfangenesErgebnis && !empfangenIstAntwort && !hatGeteilt()) {
+    zeigeFairGate();
+    out.innerHTML = '';
+    return;
+  }
+  gate.classList.remove('show');
   const A = geladen.a, B = geladen.b;
   const nameA = esc(A.name || 'Person A'), nameB = esc(B.name || 'Person B');
   const leadA = leitstile(A), leadB = leitstile(B);
@@ -1092,42 +1117,41 @@ function renderVergleich() {
   html += tippsHTML('b', nameB, nameA, leadB);
   html += '<div class="disclaimer" style="margin-top:26px"><strong>Wichtig:</strong> Beide Profile zeigen Tendenzen, keine Diagnosen. Die Hinweise sind Gesprächsanregungen für euch — kein Ersatz für eine fachliche Beratung.</div>';
 
-  /* Rückweg-Karte nur, wenn die andere Seite den Vergleich vermutlich noch nicht hat:
-     entfällt, sobald dieses Gerät selbst schon geteilt hat oder der Link eine Antwort war */
-  const rueckweg = empfangenesErgebnis && geladen.a === empfangenesErgebnis && geladen.b
-    && !empfangenIstAntwort && !hatGeteilt();
-  if (rueckweg) {
-    html += '<div class="backshare">'
-      + '<h3>Und ' + nameA + '?</h3>'
-      + '<p>Sitzt ihr nebeneinander? Dann schaut einfach <strong>gemeinsam auf diesen Bildschirm</strong>.<br><strong>Sieht ' + nameA + ' den Vergleich noch nicht?</strong> Dann schick dein Ergebnis rüber:</p>'
-      + '<button id="btn-backshare">Schick ' + nameA + ' dein Ergebnis</button>'
-      + '<div id="backshare-panel">'
-      + '<div id="backshare-qr"></div>'
-      + '<div class="share-rows">'
-      + (navigator.share ? '<button id="btn-backwebshare">Link teilen …</button>' : '')
-      + '<button id="btn-backcopy">Oder: Link kopieren</button>'
-      + '</div>'
-      + '<p class="share-note">' + nameA + ' scannt den Code oder öffnet den Link — und sieht sofort euren Vergleich.</p>'
-      + '</div></div>';
-  }
-
   out.innerHTML = html;
-
-  if (rueckweg) {
-    document.getElementById('btn-backshare').addEventListener('click', () => {
-      const eigene = geladen.b;
-      if (!sichereName(eigene)) return;
-      const url = linkBasis() + '#p=' + encodeErgebnis(eigene.name, eigene.datum || new Date().toISOString().slice(0, 10), eigene.scores, true);
-      zeigeQR(document.getElementById('backshare-qr'), url);
-      document.getElementById('backshare-panel').classList.add('show');
-      merkeGeteilt();
-      const backcopy = document.getElementById('btn-backcopy');
-      backcopy.onclick = () => kopiereLink(url, backcopy);
-      const backshareBtn = document.getElementById('btn-backwebshare');
-      if (backshareBtn) backshareBtn.onclick = () => teileLink(url);
-    });
-  }
 }
+
+/* ── Fairness-Sperre: erst teilen, dann sehen ── */
+let fairUrl = '';
+
+function zeigeFairGate() {
+  const eigene = geladen.b;
+  const name = (empfangenesErgebnis && empfangenesErgebnis.name) || 'die andere Person';
+  document.getElementById('fair-name').textContent = name;
+  document.getElementById('fair-name2').textContent = name;
+  fairUrl = linkBasis() + '#p=' + encodeErgebnis(eigene.name, eigene.datum || new Date().toISOString().slice(0, 10), eigene.scores, true);
+  zeigeQR(document.getElementById('fair-qr'), fairUrl);
+  document.getElementById('fair-webshare').style.display = navigator.share ? '' : 'none';
+  document.getElementById('fair-gate').classList.add('show');
+}
+
+function fairFrei() {
+  document.getElementById('fair-weiter').disabled = false;
+  document.getElementById('fair-note').textContent = 'Danke — jetzt könnt ihr beide vergleichen.';
+}
+document.getElementById('fair-webshare').addEventListener('click', () => { teileLink(fairUrl); fairFrei(); });
+document.getElementById('fair-copy').addEventListener('click', () => { kopiereLink(fairUrl, document.getElementById('fair-copy')); fairFrei(); });
+document.getElementById('fair-scanned').addEventListener('click', () => {
+  merkeGeteilt();
+  const b = document.getElementById('fair-scanned');
+  b.textContent = 'Bestätigt ✓';
+  b.disabled = true;
+  fairFrei();
+});
+document.getElementById('fair-weiter').addEventListener('click', () => {
+  document.getElementById('fair-gate').classList.remove('show');
+  renderVergleich();
+  document.getElementById('cmp-output').scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
 
 /* ── Teilen per QR-Code / Link (Ergebnis steckt im Link, kein Upload) ── */
 const ONLINE_URL = 'https://gkarl-apps.github.io/selbsttest/';
