@@ -318,12 +318,11 @@ h1 {
 .file-line a:hover { color: var(--ink); }
 .share-panel { display: none; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
 .share-panel.show { display: block; }
-#qr-box, #fair-qr {
+#qr-box {
   width: 212px; padding: 12px; background: #fff; border-radius: 10px;
   margin: 0 auto 14px; border: 1px solid var(--line);
 }
-#qr-box img, #qr-box canvas, #qr-box table,
-#fair-qr img, #fair-qr canvas, #fair-qr table { display: block; margin: 0 auto; }
+#qr-box img, #qr-box canvas, #qr-box table { display: block; margin: 0 auto; }
 .share-rows { display: grid; gap: 8px; max-width: 320px; margin: 0 auto; }
 .share-rows button { width: 100%; }
 #btn-webshare, #fair-webshare {
@@ -332,12 +331,12 @@ h1 {
   padding: 12px 20px; cursor: pointer; transition: opacity .15s;
 }
 #btn-webshare:hover, #fair-webshare:hover { opacity: .9; }
-#btn-copy, #fair-copy, #fair-scanned {
+#btn-copy, #fair-copy {
   font-family: 'Source Sans 3', sans-serif; font-size: 13px; font-weight: 600;
   background: transparent; border: 1px solid var(--line2); color: var(--ink2);
   border-radius: 10px; padding: 10px 16px; cursor: pointer; transition: all .15s;
 }
-#btn-copy:hover, #fair-copy:hover, #fair-scanned:hover { border-color: var(--ink2); color: var(--ink); }
+#btn-copy:hover, #fair-copy:hover { border-color: var(--ink2); color: var(--ink); }
 .share-mini { margin-top: 8px; font-size: 11.5px; color: var(--ink3); text-align: center; }
 .share-note { margin-top: 10px; font-size: 12.5px; color: var(--ink3); line-height: 1.5; }
 #link-banner a { color: var(--indigo); }
@@ -559,15 +558,13 @@ footer a:hover { color: var(--ink); }
     <div id="fair-gate">
       <h3>Fair ist fair: Erst bekommt <span id="fair-name">…</span> dein Ergebnis</h3>
       <p><span id="fair-name2">…</span> hat dir ein Ergebnis geschickt. Schick deins zurück — <strong>dann seht ihr beide den Vergleich.</strong></p>
-      <div id="fair-qr"></div>
       <div class="share-rows">
         <button id="fair-webshare">Link teilen …</button>
         <button id="fair-copy">Oder: Link kopieren</button>
-        <button id="fair-scanned">Der Code wurde gescannt ✓</button>
       </div>
       <div class="fair-weiter-row">
         <button id="fair-weiter" disabled>Weiter zum Vergleich</button>
-        <p class="fair-note" id="fair-note">Wird frei, sobald du geteilt hast.</p>
+        <p class="fair-note" id="fair-note">Wird frei, sobald du geteilt oder kopiert hast.</p>
       </div>
     </div>
     <div id="cmp-output"></div>
@@ -1129,23 +1126,22 @@ function zeigeFairGate() {
   document.getElementById('fair-name').textContent = name;
   document.getElementById('fair-name2').textContent = name;
   fairUrl = linkBasis() + '#p=' + encodeErgebnis(eigene.name, eigene.datum || new Date().toISOString().slice(0, 10), eigene.scores, true);
-  zeigeQR(document.getElementById('fair-qr'), fairUrl);
   document.getElementById('fair-webshare').style.display = navigator.share ? '' : 'none';
+  document.getElementById('fair-copy').textContent = navigator.share ? 'Oder: Link kopieren' : 'Link kopieren';
   document.getElementById('fair-gate').classList.add('show');
 }
 
 function fairFrei() {
+  merkeGeteilt();
   document.getElementById('fair-weiter').disabled = false;
   document.getElementById('fair-note').textContent = 'Danke — jetzt könnt ihr beide vergleichen.';
 }
-document.getElementById('fair-webshare').addEventListener('click', () => { teileLink(fairUrl); fairFrei(); });
-document.getElementById('fair-copy').addEventListener('click', () => { kopiereLink(fairUrl, document.getElementById('fair-copy')); fairFrei(); });
-document.getElementById('fair-scanned').addEventListener('click', () => {
-  merkeGeteilt();
-  const b = document.getElementById('fair-scanned');
-  b.textContent = 'Bestätigt ✓';
-  b.disabled = true;
-  fairFrei();
+/* Frei wird der Vergleich nur durch die Handlung selbst: abgeschlossenes Teilen-Menü oder kopierter Link — keine Selbstauskunft */
+document.getElementById('fair-webshare').addEventListener('click', () => {
+  navigator.share({ title: 'Persönlichkeitsstile — Profil-Vergleich', url: fairUrl }).then(fairFrei).catch(() => {});
+});
+document.getElementById('fair-copy').addEventListener('click', () => {
+  kopiereLink(fairUrl, document.getElementById('fair-copy'), fairFrei);
 });
 document.getElementById('fair-weiter').addEventListener('click', () => {
   document.getElementById('fair-gate').classList.remove('show');
@@ -1247,12 +1243,13 @@ function zeigeQR(box, url) {
   }
 }
 
-function kopiereLink(url, btn) {
+function kopiereLink(url, btn, dann) {
   merkeGeteilt();
   const alt = btn.textContent;
   const fertig = () => {
     btn.textContent = 'Link kopiert ✓ — jetzt z. B. in WhatsApp einfügen und abschicken';
     setTimeout(() => { btn.textContent = alt; }, 2500);
+    if (dann) dann();
   };
   const notloesung = () => {
     const ta = document.createElement('textarea');
