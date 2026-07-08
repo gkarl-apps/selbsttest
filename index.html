@@ -363,11 +363,10 @@ h1 {
 }
 .datei-btn {
   display: inline-block; margin-top: 14px; cursor: pointer; position: relative;
-  font-family: 'Source Sans 3', sans-serif; font-size: 12.5px; font-weight: 600;
-  color: var(--ink2); border: 1px solid var(--line2); border-radius: 999px;
-  padding: 8px 18px; transition: all .15s;
+  font-family: 'Source Sans 3', sans-serif; font-size: 12.5px;
+  color: var(--ink3); text-decoration: underline; text-underline-offset: 2px; transition: color .15s;
 }
-.datei-btn:hover { border-color: var(--indigo); color: var(--ink); }
+.datei-btn:hover { color: var(--ink); }
 .datei-btn:focus-within { outline: 2px solid var(--clay); outline-offset: 2px; }
 .datei-btn input { position: absolute; width: 1px; height: 1px; opacity: 0; }
 .loader .who {
@@ -538,7 +537,7 @@ footer a:hover { color: var(--ink); }
       <div class="loader b">
         <div class="who">Du</div>
         <div class="state" id="state-b">Dein Ergebnis erscheint hier von selbst, sobald du den Test gemacht hast.</div>
-        <label class="datei-btn"><input type="file" id="file-b" accept=".json,application/json"><span id="file-btn-b">Deine Datei wählen</span></label>
+        <label class="datei-btn"><input type="file" id="file-b" accept=".json,application/json"><span id="file-btn-b">Oder: Datei laden</span></label>
       </div>
       <div class="loader a">
         <div class="who">Die andere Person</div>
@@ -552,7 +551,7 @@ footer a:hover { color: var(--ink); }
           <span class="state-alt">Oder sie schickt dir ihren Link per WhatsApp — du öffnest den Link, mehr nicht.</span>
           <span class="state-alt">Hat sie noch kein Ergebnis? Dann zeig ihr den QR-Code zu deinem Ergebnis — oder schick ihr deinen Link per WhatsApp. Sie öffnet ihn, den Rest erklärt ihr die Seite.</span>
         </div>
-        <label class="datei-btn"><input type="file" id="file-a" accept=".json,application/json"><span id="file-btn-a">Ihre Datei wählen</span></label>
+        <label class="datei-btn"><input type="file" id="file-a" accept=".json,application/json"><span id="file-btn-a">Oder: Datei laden</span></label>
       </div>
     </div>
     <div id="fair-gate">
@@ -1167,7 +1166,7 @@ function setLoaderLoaded(slot, data, quelle) {
   label.classList.add('loaded');
   document.getElementById('state-' + slot).innerHTML =
     '<div class="loaded-name">' + esc(data.name || 'Ohne Namen') + '</div>' + quelle;
-  document.getElementById('file-btn-' + slot).textContent = 'Andere Datei wählen';
+  document.getElementById('file-btn-' + slot).textContent = 'Oder: andere Datei laden';
 }
 
 function encodeErgebnis(name, datum, scoresArr, antwort) {
