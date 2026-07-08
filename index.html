@@ -37,6 +37,9 @@ body {
 
 .wrap { max-width: 720px; margin: 0 auto; }
 
+/* Am PC/Desktop wirken die mobil getunten px-Größen klein — Inhalt proportional hochskalieren */
+@media (min-width: 820px) { .wrap { zoom: 1.15; } }
+
 /* ── Kopf ── */
 header {
   padding: 56px 0 36px;
