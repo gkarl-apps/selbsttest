@@ -1136,9 +1136,18 @@ function fairFrei() {
   document.getElementById('fair-weiter').disabled = false;
   document.getElementById('fair-note').textContent = 'Danke — jetzt könnt ihr beide vergleichen.';
 }
-/* Frei wird der Vergleich nur durch die Handlung selbst: abgeschlossenes Teilen-Menü oder kopierter Link — keine Selbstauskunft */
+/* Frei wird der Vergleich nur durch die Handlung selbst: abgeschlossenes Teilen-Menü oder kopierter Link — keine Selbstauskunft.
+   Manche Handy-Browser erfüllen das share()-Promise nie, wenn die Ziel-App (WhatsApp …) den Browser verdrängt —
+   darum zählt auch: Seite geht in den Hintergrund, während das Teilen läuft. Abbruch im Menü lässt die Seite sichtbar → bleibt gesperrt. */
+let fairTeilenLaeuft = false;
 document.getElementById('fair-webshare').addEventListener('click', () => {
-  navigator.share({ title: 'Persönlichkeitsstile — Profil-Vergleich', url: fairUrl }).then(fairFrei).catch(() => {});
+  fairTeilenLaeuft = true;
+  navigator.share({ title: 'Persönlichkeitsstile — Profil-Vergleich', url: fairUrl })
+    .then(() => { fairTeilenLaeuft = false; fairFrei(); })
+    .catch(() => { fairTeilenLaeuft = false; });
+});
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && fairTeilenLaeuft) { fairTeilenLaeuft = false; fairFrei(); }
 });
 document.getElementById('fair-copy').addEventListener('click', () => {
   kopiereLink(fairUrl, document.getElementById('fair-copy'), fairFrei);
