@@ -286,15 +286,17 @@ h1 {
 .save-box .save-sub + .save-sub { margin-top: 8px; }
 .save-box .save-sub a { color: var(--indigo); }
 .save-box .save-sub strong { color: var(--ink); }
-.share-steps-title { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
-.share-steps {
-  margin: 0 0 16px; padding-left: 22px;
-  font-size: 13.5px; color: var(--ink2); line-height: 1.55;
-  display: grid; gap: 5px;
+.share-lead { font-size: 14.5px; color: var(--ink); line-height: 1.6; margin: 4px 0 6px; }
+.share-lead strong { color: var(--ink); font-weight: 700; }
+.share-lead-sub { font-size: 12.5px; color: var(--ink3); line-height: 1.55; margin-bottom: 22px; }
+.share-how {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10.5px;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--clay); margin-bottom: 12px;
 }
+.share-qr { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); text-align: center; }
+.share-qr-title { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+.share-qr-sub { font-size: 12px; color: var(--ink3); line-height: 1.5; margin-bottom: 14px; }
 .share-panel .save-sub { margin-bottom: 10px; }
-#qr-box { margin-bottom: 20px; }
-.share-panel .share-steps-title { margin-top: 4px; }
 .save-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
 #save-name {
   flex: 1; min-width: 150px;
@@ -506,19 +508,19 @@ footer a:hover { color: var(--ink); }
       </div>
       <p class="save-hint" id="save-hint"></p>
       <div class="share-panel" id="share-panel">
-        <p class="share-steps-title">So geht es:</p>
-        <ol class="share-steps">
-          <li>Die andere Person öffnet die Kamera auf ihrem Handy.</li>
-          <li>Sie hält die Kamera auf diesen QR-Code.</li>
-          <li>Auf ihrem Bildschirm erscheint ein Link. Sie tippt darauf — das öffnet den Link.</li>
-        </ol>
-        <div id="qr-box"></div>
+        <p class="share-lead">Dein Ergebnis reist als <strong>Link</strong> — wer ihn öffnet, sieht dein Profil.</p>
+        <p class="share-lead-sub">Hochgeladen wird nichts: alles steckt im Link selbst, nur wer ihn bekommt, sieht dein Ergebnis.</p>
+        <p class="share-how">So schickst du ihn:</p>
         <div class="share-rows">
           <button id="btn-webshare">Link teilen …</button>
-          <button id="btn-copy">Oder: Link kopieren</button>
+          <p class="share-mini" id="share-mini">Teilen-Menü deines Handys — WhatsApp, AirDrop, E-Mail.</p>
+          <button id="btn-copy">Link kopieren</button>
         </div>
-        <p class="share-mini" id="share-mini">„Link teilen" öffnet das Teilen-Menü deines Handys — AirDrop, WhatsApp, E-Mail und mehr.</p>
-        <p class="share-note">Die andere Person muss den Link nur öffnen. Dein Ergebnis steckt komplett im Link selbst — es wird nichts ins Internet hochgeladen. Nur wer den Link bekommt, kann dein Ergebnis sehen.</p>
+        <div class="share-qr">
+          <p class="share-qr-title">Oder: QR-Code scannen</p>
+          <p class="share-qr-sub">Mit der normalen Handy-Kamera auf den Code halten — mehr nicht.</p>
+          <div id="qr-box"></div>
+        </div>
       </div>
     </div>
     <p class="file-line"><a href="#" id="btn-save">Dein Testergebnis als Datei sichern</a> — für später oder zum Verschicken an andere.</p>
@@ -559,7 +561,7 @@ footer a:hover { color: var(--ink); }
       <p><span id="fair-name2">…</span> hat dir ein Ergebnis geschickt. Schick deins zurück — <strong>dann seht ihr beide den Vergleich.</strong></p>
       <div class="share-rows">
         <button id="fair-webshare">Link teilen …</button>
-        <button id="fair-copy">Oder: Link kopieren</button>
+        <button id="fair-copy">Link kopieren</button>
       </div>
       <div class="fair-weiter-row">
         <button id="fair-weiter" disabled>Weiter zum Vergleich</button>
@@ -1126,7 +1128,8 @@ function zeigeFairGate() {
   document.getElementById('fair-name2').textContent = name;
   fairUrl = linkBasis() + '#p=' + encodeErgebnis(eigene.name, eigene.datum || new Date().toISOString().slice(0, 10), eigene.scores, true);
   document.getElementById('fair-webshare').style.display = navigator.share ? '' : 'none';
-  document.getElementById('fair-copy').textContent = navigator.share ? 'Oder: Link kopieren' : 'Link kopieren';
+  document.getElementById('fair-copy').style.display = navigator.share ? 'none' : '';
+  document.getElementById('fair-copy').textContent = 'Link kopieren';
   document.getElementById('fair-gate').classList.add('show');
 }
 
@@ -1231,7 +1234,11 @@ document.getElementById('btn-share').addEventListener('click', () => {
 document.getElementById('btn-webshare').addEventListener('click', () => {
   teileLink(shareUrl);
 });
-if (!navigator.share) {
+/* Wo ein Teilen-Menü da ist (Handy, Mac), hat es selbst ein „Kopieren" — der Kopier-Knopf ist redundant.
+   Wo keins da ist (Desktop), ist Kopieren der einzige Sende-Weg; Teilen-Knopf entfällt. QR bleibt immer. */
+if (navigator.share) {
+  document.getElementById('btn-copy').style.display = 'none';
+} else {
   document.getElementById('btn-webshare').style.display = 'none';
   document.getElementById('share-mini').style.display = 'none';
 }
