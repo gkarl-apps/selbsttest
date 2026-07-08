@@ -366,8 +366,9 @@ h1 {
 .datei-btn {
   display: inline-block; margin-top: 14px; cursor: pointer; position: relative;
   font-family: 'Source Sans 3', sans-serif; font-size: 12.5px;
-  color: var(--ink3); text-decoration: underline; text-underline-offset: 2px; transition: color .15s;
+  color: var(--ink3); transition: color .15s;
 }
+.datei-btn .datei-act { text-decoration: underline; text-underline-offset: 2px; }
 .datei-btn:hover { color: var(--ink); }
 .datei-btn:focus-within { outline: 2px solid var(--clay); outline-offset: 2px; }
 .datei-btn input { position: absolute; width: 1px; height: 1px; opacity: 0; }
@@ -379,11 +380,6 @@ h1 {
 .loader.b .who { color: var(--clay); }
 .loader .state { font-size: 13.5px; color: var(--ink2); line-height: 1.5; }
 .loader .state strong { color: var(--ink); }
-.loader-steps {
-  text-align: left; margin: 10px 0 2px; padding-left: 22px;
-  display: grid; gap: 5px; font-size: 13px;
-}
-.state-alt { display: block; margin-top: 8px; font-size: 12.5px; }
 .state-file { color: var(--ink3); }
 .loader .loaded-name { font-family: 'Fraunces', serif; font-size: 20px; }
 .loader.a .loaded-name { color: var(--indigo); }
@@ -539,21 +535,12 @@ footer a:hover { color: var(--ink); }
       <div class="loader b">
         <div class="who">Du</div>
         <div class="state" id="state-b">Dein Ergebnis erscheint hier von selbst, sobald du den Test gemacht hast.</div>
-        <label class="datei-btn"><input type="file" id="file-b" accept=".json,application/json"><span id="file-btn-b">Oder: Datei laden</span></label>
+        <label class="datei-btn"><input type="file" id="file-b" accept=".json,application/json"><span class="datei-cond">Kein Link, nur eine Datei? </span><span class="datei-act" id="file-btn-b">Hier laden</span></label>
       </div>
       <div class="loader a">
         <div class="who">Die andere Person</div>
-        <div class="state" id="state-a">
-          Ihr Ergebnis fehlt noch — so kommt es hierher:
-          <ol class="loader-steps">
-            <li>Sie tippt bei <strong>ihrem</strong> Ergebnis auf „Mit jemandem vergleichen".</li>
-            <li>Ihr Handy zeigt einen QR-Code.</li>
-            <li>Du scannst ihn mit deiner Handy-Kamera — der Vergleich öffnet sich von selbst.</li>
-          </ol>
-          <span class="state-alt">Oder sie schickt dir ihren Link per WhatsApp — du öffnest den Link, mehr nicht.</span>
-          <span class="state-alt">Hat sie noch kein Ergebnis? Dann zeig ihr den QR-Code zu deinem Ergebnis — oder schick ihr deinen Link per WhatsApp. Sie öffnet ihn, den Rest erklärt ihr die Seite.</span>
-        </div>
-        <label class="datei-btn"><input type="file" id="file-a" accept=".json,application/json"><span id="file-btn-a">Oder: Datei laden</span></label>
+        <div class="state" id="state-a">Öffne den Link, den dir jemand geschickt hat — ihr Ergebnis erscheint dann hier von selbst.</div>
+        <label class="datei-btn"><input type="file" id="file-a" accept=".json,application/json"><span class="datei-cond">Kein Link, nur eine Datei? </span><span class="datei-act" id="file-btn-a">Hier laden</span></label>
       </div>
     </div>
     <div id="fair-gate">
@@ -1169,7 +1156,9 @@ function setLoaderLoaded(slot, data, quelle) {
   label.classList.add('loaded');
   document.getElementById('state-' + slot).innerHTML =
     '<div class="loaded-name">' + esc(data.name || 'Ohne Namen') + '</div>' + quelle;
-  document.getElementById('file-btn-' + slot).textContent = 'Oder: andere Datei laden';
+  document.getElementById('file-btn-' + slot).textContent = 'Andere Datei laden';
+  const cond = label.querySelector('.datei-cond');
+  if (cond) cond.style.display = 'none';
 }
 
 function encodeErgebnis(name, datum, scoresArr, antwort) {
